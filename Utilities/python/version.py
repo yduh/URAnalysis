@@ -46,7 +46,7 @@ def cmssw_minor_version():
 
 
 @diaper
-def fsa_version_unsafe():
+def git_version_unsafe():
     ''' Get commit hash of FSA '''
     result = subprocess.Popen(
         ['git', 'log', '-1', '--format=%h'],
@@ -55,11 +55,10 @@ def fsa_version_unsafe():
 
 
 @diaper
-def fsa_version():
-    ''' Get the current commit hash of FSA, without using the git command
+def git_version():
+    ''' Get the current commit hash of the framework, without using the git command
 
     Reads the information directly from the .git repository folder.
-
     '''
     HEAD_file = os.path.join(
         _fsa_directory, '.git', 'HEAD')
