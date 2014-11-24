@@ -29,8 +29,8 @@ def customize(process, isMC=True, **kwargs):
             cms.Path(
                 process.meta *
                 process.objectsSkim *
-                sequence * #topology skim sequence
-                process.makeTuples
+                sequence#topology skim sequence                                                                                                                                                                                            
+                #process.makeTuples  
                 )
             )
         process.schedule.append(
