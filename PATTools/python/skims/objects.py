@@ -14,7 +14,7 @@ skimmedMuons = cms.EDFilter(
 
 skimmedJets = cms.EDFilter(
     "PATJetSelector",
-    sec = cms.InputTag("slimmedJets"),
+    src = cms.InputTag("slimmedJets"),
     cut = cms.string('pt > 20 && abs(eta) < 4')
 )
 
