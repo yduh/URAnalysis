@@ -31,6 +31,8 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include <DQMServices/Core/interface/DQMStore.h>
 #include <DQMServices/Core/interface/MonitorElement.h>
+#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
+#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
 #include "TTree.h"
 #include "TObjString.h"
 #include "TH1F.h"
@@ -57,7 +59,7 @@ private:
   virtual void analyze(const edm::Event&, const edm::EventSetup&) override {}
   virtual void endJob() override;
 
-  virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
+  virtual void endRun(edm::Run const&, edm::EventSetup const&) override {}
   virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
 
   // ----------member data ---------------------------
@@ -137,7 +139,7 @@ MetaNtuplizer::endLuminosityBlock(edm::LuminosityBlock const& block, edm::EventS
   processed_ = counter->value;
   meta_tree_->Fill();
 
-  if(!string_dumped_)
+  /*if(!string_dumped_)
     {
       string_dumped_ = true;
       const edm::Provenance& prov = block.getProvenance(counter.id());
@@ -150,7 +152,7 @@ MetaNtuplizer::endLuminosityBlock(edm::LuminosityBlock const& block, edm::EventS
       to_json_.insert(std::make_pair<std::string, std::string>("pat_cmsswVersion", pset.getParameter<std::string>("cmsswVersion")));
       to_json_.insert(std::make_pair<std::string, std::string>("pat_date"        , pset.getParameter<std::string>("date")));
       to_json_.insert(std::make_pair<std::string, std::string>("pat_globalTag"   , pset.getParameter<std::string>("globalTag")));
-    }
+      }*/
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
