@@ -26,8 +26,8 @@ def diaper(f):
             return "UNKNOWN"
     return wrapper
 
-_fsa_directory = os.path.join(
-    os.environ['CMSSW_BASE'], 'src', 'FinalStateAnalysis')
+_fwk_directory = os.path.join(
+    os.environ['CMSSW_BASE'], 'src', 'placeholder')
 
 
 @diaper
@@ -47,10 +47,10 @@ def cmssw_minor_version():
 
 @diaper
 def git_version_unsafe():
-    ''' Get commit hash of FSA '''
+    ''' Get commit hash'''
     result = subprocess.Popen(
         ['git', 'log', '-1', '--format=%h'],
-        cwd=_fsa_directory, stdout=subprocess.PIPE).communicate()[0]
+        cwd=_fwk_directory, stdout=subprocess.PIPE).communicate()[0]
     return result.strip()
 
 
@@ -61,7 +61,7 @@ def git_version():
     Reads the information directly from the .git repository folder.
     '''
     HEAD_file = os.path.join(
-        _fsa_directory, '.git', 'HEAD')
+        _fwk_directory, '.git', 'HEAD')
     if not os.path.exists(HEAD_file):
         warnings.warn("Could not extract git commit information!")
         return 'NO_IDEA'
@@ -69,7 +69,7 @@ def git_version():
     with open(HEAD_file, 'r') as head:
         head_ref = head.readline().split(':')[1].strip()
         commit_file = os.path.join(
-            _fsa_directory, '.git', head_ref)
+            _fwk_directory, '.git', head_ref)
         # Read commit ID for current HEAD
         with open(commit_file, 'r') as commit:
             return commit.readline().strip()[0:7]
@@ -90,14 +90,14 @@ def repo_status():
     ''' Get status of FSA repository '''
     result = subprocess.Popen(
         ['git', 'status', '-s'],
-        cwd=_fsa_directory, stdout=subprocess.PIPE).communicate()[0]
+        cwd=_fwk_directory, stdout=subprocess.PIPE).communicate()[0]
     return result.strip()
 
 if __name__ == "__main__":
     print "Version info:"
     print "CMSSW: %s - major = %i" % (cmssw_version(), cmssw_major_version())
-    print "Commit: %s" % fsa_version_unsafe()
-    print "Commit (safe mode): %s" % fsa_version()
+    print "Commit: %s" % git_version_unsafe()
+    print "Commit (safe mode): %s" % git_version()
     print "User: %s" % get_user()
     print "Repo Status:\n%s" % repo_status()
 
