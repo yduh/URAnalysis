@@ -5,6 +5,5 @@
   <use name="FWCore/ParameterSet"/>
   <use name="DQMServices/Core"/>
   <use name="SimDataFormats/PileupSummaryInfo"/>
-  <use   name="CommonTools/Utils"/>
-  <use name="placeholder/PATTools"/>
-</library>
+  <use name="CommonTools/Utils"/>
+</library> 

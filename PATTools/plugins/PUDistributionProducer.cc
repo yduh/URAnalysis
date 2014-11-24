@@ -1,7 +1,14 @@
-// PUDistributionProducer 
+// -*- C++ -*-
+//
+// Package:    placeholder/PATTools
+// Class:      PUDistributionProducer 
+//
+/* *\class PUDistributionProducer PUDistributionProducer.cc
+// 
 // Author Mauro Verzetti UR
 // Produces the input PU distribution histogram as DQM monitor element,
 // can be put in edm Files
+*/
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -38,7 +45,7 @@ public:
   explicit PUDistributionProducer(const edm::ParameterSet& cfg):
     binning_( cfg.getParameter<edm::ParameterSet>("binning") )
   {}
-  ~PUDistributionProducer();
+  ~PUDistributionProducer(){}
 
   virtual void bookHistograms(DQMStore::IBooker &, edm::Run const &, edm::EventSetup const &);
   virtual void dqmBeginRun(const edm::Run&, const edm::EventSetup&) {}
