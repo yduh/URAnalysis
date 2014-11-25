@@ -33,3 +33,15 @@ export PYTHONPATH=$vpython/lib/python2.7/site-packages/:$PYTHONPATH
 
 # Don't require a scram build to get updated scripts
 export PATH=$fwk/Utilities/scripts:$PATH
+export PATH=$fwk/PlotTools/scripts:$PATH
+
+#activate local rake
+if which ruby >/dev/null && which gem >/dev/null; then
+    gemsdir=$(ruby -rubygems -e 'puts Gem.user_dir')/bin
+    if $(echo "$PATH"|grep -q $gemsdir) >/dev/null; then
+	echo "custom ruby already sourced"
+    else
+	echo "activating ruby"
+	PATH="$gemsdir:$PATH"
+    fi
+fi
