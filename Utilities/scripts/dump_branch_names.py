@@ -1,5 +1,5 @@
 #! /bin/env python
-__doc__='''
+'''
 Like edmDumpEventContent, but for custom trees.
 The --type option prints together with the branch
 name also the C++ type for the branch
@@ -8,7 +8,7 @@ name also the C++ type for the branch
 import sys
 if len(sys.argv) < 3 or '-h' in sys.argv or '--help' in sys.argv:
     print 'Usage dump_branch_names.py file.root path/to/Tree (--type, -t)'
-    ptint __doc__
+    print __doc__
     sys.exit(1)
 
 print_type = '--type' in sys.argv or '-t' in sys.argv
