@@ -10,6 +10,7 @@ Author: Mauro Verzetti UR
 from Queue import Queue
 import threading
 import placeholder.Utilities.prettyjson as prettyjson
+from placeholder.Utilities.threadtools import LockedObject
 import ROOT
 import sys
 import logging
@@ -79,22 +80,6 @@ class LumiJson():
 
       with open(fname, 'w') as output:
          output.write(prettyjson.dumps(json))
-
-class LockedObject(object):
-   '''Simple implementation of an object
-   shared beween threads.'''
-   def __init__(self, item):
-      self.object = item
-      self.lock = threading.Lock()
-
-   def __enter__(self):
-      self.lock.acquire()
-      return self.object
-
-   def __exit__(self, type_, value, traceback):
-      #check if any error occurred and raise it
-      self.lock.release()
-      return False
 
 class Extractor(threading.Thread):
    def __init__(self, name, queue, pu_histo, out_json):
