@@ -13,10 +13,6 @@ export base=$CMSSW_BASE/src
 vpython=$base/placeholder/external/virtualenv
 echo "Activating python virtualenv from $vpython"
 
-# Define some shortcuts to HDFS and scratch areas
-export hdfs=/hdfs/store/user/$LOGNAME/
-export scratch=/scratch/$LOGNAME/
-
 if [ -d "$vpython" ]; then
   echo "Activating python virtual environment"
   export VIRTUAL_ENV_DISABLE_PROMPT=1
@@ -25,6 +21,9 @@ if [ -d "$vpython" ]; then
   source bin/activate
   popd
 fi
+
+#source site-dependent configuration
+source $fwk/Configuration/site/site_configuration.sh
 
 # Put the PWD into the PYTHONPATH
 export PYTHONPATH=.:$PYTHONPATH
