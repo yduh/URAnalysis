@@ -9,7 +9,7 @@ set -o nounset
 install=$CMSSW_BASE/src/placeholder/install
 
 #installing python
-install/install_python.sh
+$install/install_python.sh
 
 #installing rake
-install/install_rake.sh
+$install/install_rake.sh
