@@ -1,5 +1,5 @@
 import rootpy.plotting.views as views
-from placeholder.PlotTools.THBin import zipBins
+from URAnalysis.PlotTools.THBin import zipBins
 
 class InflateErrorView(views._FolderView):
     ''' 

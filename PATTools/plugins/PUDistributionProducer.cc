@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Package:    placeholder/PATTools
+// Package:    URAnalysis/PATTools
 // Class:      PUDistributionProducer 
 //
 /* *\class PUDistributionProducer PUDistributionProducer.cc

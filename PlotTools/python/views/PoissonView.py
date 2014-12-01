@@ -14,7 +14,7 @@ try:
     from rootpy.utils import asrootpy
 except ImportError:
     from rootpy import asrootpy
-import placeholder.Utilities.stat.poisson as poisson
+import URAnalysis.Utilities.stat.poisson as poisson
 
 class PoissonView(views._FolderView):
     def __init__(self, dir, x_err=True, set_zero_bins=None, marker_size=1, is_scaled=False):

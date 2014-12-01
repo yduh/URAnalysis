@@ -6,7 +6,7 @@
 # Author: Mauro Verzetti, UR
 #
 
-fwk_location=$CMSSW_BASE/src/placeholder
+fwk_location=$CMSSW_BASE/src/URAnalysis
 external=$fwk_location/external
 vpython=$external/virtualenv
 vpython_src=$external/src/virtualenv

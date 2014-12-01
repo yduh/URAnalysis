@@ -1,6 +1,6 @@
 import rootpy.plotting.views as views
-from placeholder.Utilities.stat.quad import quad
-from placeholder.PlotTools.THBin import zipBins
+from URAnalysis.Utilities.stat.quad import quad
+from URAnalysis.PlotTools.THBin import zipBins
 
 class SystematicsView(views._FolderView):
     ''' 

@@ -1,5 +1,5 @@
 import FWCore.ParameterSet.Config as cms
-import placeholder.PATTools.meta  as meta
+import URAnalysis.PATTools.meta  as meta
 from pdb import set_trace
 
 def customize(process, isMC=True, **kwargs):
@@ -8,11 +8,11 @@ def customize(process, isMC=True, **kwargs):
     process.meta += meta.embed_meta(process, isMC)
 
     #load skimmed objects
-    process.load('placeholder.PATTools.skims.objects')
+    process.load('URAnalysis.PATTools.skims.objects')
     #defines objectsSkim sequence
     
     #skimming sequences
-    process.load('placeholder.PATTools.skims.ttbarSemiLep') 
+    process.load('URAnalysis.PATTools.skims.ttbarSemiLep') 
     skim_sequences = [('ttbar', process.ttbarSemiLepSkim)]
 
     #pattuplization embedding

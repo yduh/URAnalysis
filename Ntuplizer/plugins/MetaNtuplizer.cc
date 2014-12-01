@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    placeholder/MetaNtuplizer.cc
+// Package:    URAnalysis/MetaNtuplizer.cc
 // Class:      MetaNtuplizer.cc
 // 
-/**\class MetaNtuplizer.cc MetaNtuplizer.cc.cc placeholder/MetaNtuplizer.cc/plugins/MetaNtuplizer.cc.cc
+/**\class MetaNtuplizer.cc MetaNtuplizer.cc.cc URAnalysis/MetaNtuplizer.cc/plugins/MetaNtuplizer.cc.cc
 
  Description: Computes and stores in the rootfile the Meta Information needed
 

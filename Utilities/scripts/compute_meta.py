@@ -9,12 +9,12 @@ Author: Mauro Verzetti UR
 
 from Queue import Queue
 import threading
-import placeholder.Utilities.prettyjson as prettyjson
-from placeholder.Utilities.threadtools import LockedObject
+import URAnalysis.Utilities.prettyjson as prettyjson
+from URAnalysis.Utilities.threadtools import LockedObject
 import ROOT
 import sys
 import logging
-log = logging.getLogger("fit_efficiency")
+log = logging.getLogger("compute_meta")
 logging.basicConfig(level=logging.WARNING, stream=sys.stderr)
 from argparse import ArgumentParser
 import os

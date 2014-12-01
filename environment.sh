@@ -5,12 +5,12 @@
 echo "Setting up CMSSW runtime environment"
 eval `scramv1 runtime -sh`
 
-export fwk=$CMSSW_BASE/src/placeholder/
+export URA=$CMSSW_BASE/src/URAnalysis/
 echo "Setting variable \$fwk=$fwk"
 
-export base=$CMSSW_BASE/src
+export URA_BASE=$CMSSW_BASE/src
 
-vpython=$base/placeholder/external/virtualenv
+vpython=$base/URAnalysis/external/virtualenv
 echo "Activating python virtualenv from $vpython"
 
 if [ -d "$vpython" ]; then
@@ -23,7 +23,7 @@ if [ -d "$vpython" ]; then
 fi
 
 #source site-dependent configuration
-source $fwk/Configuration/site/site_configuration.sh
+source $URA/Configuration/site/site_configuration.sh
 
 # Put the PWD into the PYTHONPATH
 export PYTHONPATH=.:$PYTHONPATH
