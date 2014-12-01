@@ -6,7 +6,7 @@ echo "Setting up CMSSW runtime environment"
 eval `scramv1 runtime -sh`
 
 export URA=$CMSSW_BASE/src/URAnalysis/
-echo "Setting variable \$fwk=$fwk"
+echo "Setting variable \$URA=$URA"
 
 export URA_BASE=$CMSSW_BASE/src
 
