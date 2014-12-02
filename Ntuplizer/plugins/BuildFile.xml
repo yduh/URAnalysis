@@ -1,4 +1,4 @@
-<library file="*.cc" name="PlaceholderNtuplizerPlugins">
+<library file="*.cc" name="URAnalysisNtuplizerPlugins">
   <use name="FWCore/Framework"/>
   <use name="FWCore/PluginManager"/>
   <use name="FWCore/ParameterSet"/>
@@ -7,5 +7,6 @@
   <use name="FWCore/ServiceRegistry"/>
   <use name="CommonTools/UtilAlgos"/>
   <use name="DQMServices/Core"/>
+  <use name="URAnalysis/Ntuplizer"/>
   <flags EDM_PLUGIN="1"/>
 </library>
