@@ -9,6 +9,7 @@ class Obj2BranchBase{
  public:
   virtual void fill(const edm::Event &) = 0;
   virtual void clear() {};
+  virtual void debug() {};
  private:
 };
 

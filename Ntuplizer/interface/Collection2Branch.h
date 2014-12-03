@@ -10,6 +10,7 @@
 #include "DataFormats/Common/interface/Handle.h"
 #include "TTree.h"
 #include "FWCore/Framework/interface/Event.h"
+#include <iostream>
 
 template <class EDObject>
 class Collection2Branch: public Obj2BranchBase{
@@ -19,13 +20,14 @@ public:
   {
     edm::ParameterSet branches = cfg.getParameter<edm::ParameterSet>("branches");
     std::vector< std::string > branch_names = branches.getParameterNames();
+    branches_.reserve(branch_names.size());
     for(auto&& name : branch_names)
       {
 	std::string expr = branches.getParameter<std::string>(name);
 	std::string full_name = prefix+"_"+name;
 	try
 	  {
-	       branches_.push_back(VObjBranchExpr<EDObject>(full_name, tree, expr));
+	       branches_.push_back(new VObjBranchExpr<EDObject>(full_name, tree, expr));
 	  }
 	catch(cms::Exception& iException)
 	  {
@@ -36,30 +38,35 @@ public:
       }
   }
 
+  ~Collection2Branch(){ for(size_t i=0; i<branches_.size(); i++) delete branches_[i]; }
   virtual void fill(const edm::Event &evt)
   {
     edm::Handle< std::vector<EDObject> > handle;
     evt.getByLabel(src_, handle);
 
     size_t size = handle->size();
+    //std::cout << "got " << src_ << " with size: " << size << std::endl;
     for(auto&& branch : branches_)
       {
-	branch.reserve(size);
+	branch->reserve(size);
       }
 
+    //std::cout << "reserved space" << std::endl;
     for(auto&& obj : *handle)
       {
 	for(auto&& branch : branches_)
 	  {
-	    branch.fill(obj);
+	    branch->fill(obj);
 	  }
       }
+    //std::cout << "filled branches" << std::endl;
   }
-  virtual void clear(){for(auto&& branch : branches_) branch.clear();}
+  virtual void clear(){for(auto&& branch : branches_) branch->clear();}
+  virtual void debug(){for(auto&& branch : branches_) branch->debug();}
 private:
   std::string prefix_;
   edm::InputTag src_;
-  std::vector< VObjBranchExpr<EDObject> > branches_;
+  std::vector< VObjBranchExpr<EDObject>* > branches_;
 };
 
 #endif //Collection2Branch

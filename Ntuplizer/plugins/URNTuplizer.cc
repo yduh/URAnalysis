@@ -33,6 +33,7 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "TTree.h"
 #include "URAnalysis/Ntuplizer/interface/ConverterFactory.h"
+#include <iostream>
 //
 // class declaration
 //
@@ -86,7 +87,7 @@ URNTuplizer::URNTuplizer(const edm::ParameterSet& iConfig)
   objects.getParameterSetNames(object_names);
   for(vstring::const_iterator obj_name = object_names.begin(); obj_name != object_names.end(); ++obj_name)
     {
-      PSet obj_cfg = iConfig.getParameter<PSet>(*obj_name);
+      PSet obj_cfg = objects.getParameter<PSet>(*obj_name);
       std::string type = obj_cfg.getParameter<std::string>("type");
       object_dumpers_.push_back( std::shared_ptr<Obj2BranchBase>(make_converter(type, *obj_name, obj_cfg, tree_)) );
     }
@@ -112,6 +113,8 @@ URNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    for(auto&& dumper : object_dumpers_) dumper->clear();
    for(auto&& dumper : object_dumpers_) dumper->fill(iEvent);
+   //std::cout << "tree dump: Entries: " << tree_->GetEntries() << std::endl;
+   //for(auto&& dumper : object_dumpers_) dumper->debug();
    tree_->Fill();
 }
 
