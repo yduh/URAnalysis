@@ -31,8 +31,8 @@ export PYTHONPATH=.:$PYTHONPATH
 export PYTHONPATH=$vpython/lib/python2.7/site-packages/:$PYTHONPATH
 
 # Don't require a scram build to get updated scripts
-export PATH=$fwk/Utilities/scripts:$PATH
-export PATH=$fwk/PlotTools/scripts:$PATH
+export PATH=$URA/Utilities/scripts:$PATH
+export PATH=$URA/PlotTools/scripts:$PATH
 
 #activate local rake
 if which ruby >/dev/null && which gem >/dev/null; then
