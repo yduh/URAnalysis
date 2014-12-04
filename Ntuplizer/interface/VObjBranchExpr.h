@@ -15,9 +15,9 @@ public:
     functor_(expr),
     name_(branch_name)
   {
-    std::cout<<name_ <<": set branch to vals addr: " << &branch_vals_ << std::endl;
-    branch_ = tree->Branch(branch_name.c_str(), "std::vector<double>", &branch_vals_);
-    std::cout<<name_ <<": set branch to vals addr: " << &branch_vals_ << std::endl;
+    //std::cout<<name_ <<": set branch to vals addr: " << &branch_vals_ << std::endl;
+    branch_ = tree->Branch(branch_name.c_str(), &branch_vals_);
+    //std::cout<<name_ <<": set branch to vals addr: " << &branch_vals_ << std::endl;
   }
 
   ~VObjBranchExpr(){ /*delete branch_vals_;*/ }
