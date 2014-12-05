@@ -6,8 +6,14 @@
 #include <vector>
 #include <iostream>
 #include <memory>
+#include "TMath.h"
 
-template <typename EDObject>
+template<typename T> T as(double x){ return static_cast<T>(x);} //for long ints should be reinterpret cast both sides (parser too) 
+template<> double as<Double_t>(double x) { return x; } //do nothing
+template<> float as<Float_t>(double x) { return x; } //do nothing
+template<> int as<Int_t>(double x) { return TMath::Nint(x); } //avoid rounding errors
+
+template <typename EDObject, typename VType>
 class VObjBranchExpr {
 public:
   VObjBranchExpr(std::string branch_name, TTree* tree, std::string &expr):
@@ -21,12 +27,13 @@ public:
   }
 
   ~VObjBranchExpr(){ /*delete branch_vals_;*/ }
-  void fill(const EDObject &obj) {branch_vals_.push_back(functor_(obj));}
+  void fill(const EDObject &obj) {branch_vals_.push_back( as<VType>(functor_(obj)));}
   void reserve(size_t i) {branch_vals_.reserve(i);}
   void clear() {branch_vals_.clear();}
-  void debug() {std::cout<<name_ <<" vals addr: "<< &branch_vals_<< " branch addr: "<< (std::vector<double>*) branch_->GetAddress() << std::endl;}
+  void debug() {std::cout<<name_ <<" vals addr: "<< &branch_vals_<< " branch addr: "<< (std::vector<VType>*) branch_->GetAddress() << std::endl;}
+
 private:
-  std::vector<double> branch_vals_;
+  std::vector<VType> branch_vals_;
   TBranch *branch_;
   StringObjectFunction<EDObject> functor_;
   std::string name_;

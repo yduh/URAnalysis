@@ -27,7 +27,7 @@ public:
 	std::string full_name = prefix+"_"+name;
 	try
 	  {
-	       branches_.push_back(new VObjBranchExpr<EDObject>(full_name, tree, expr));
+	    branches_.push_back(new VObjBranchExpr<EDObject, double>(full_name, tree, expr));
 	  }
 	catch(cms::Exception& iException)
 	  {
@@ -66,7 +66,7 @@ public:
 private:
   std::string prefix_;
   edm::InputTag src_;
-  std::vector< VObjBranchExpr<EDObject>* > branches_;
+  std::vector< VObjBranchExpr<EDObject, double>* > branches_;
 };
 
 #endif //Collection2Branch

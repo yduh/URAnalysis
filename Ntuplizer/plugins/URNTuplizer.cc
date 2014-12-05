@@ -60,6 +60,10 @@ private:
   TTree *tree_;
   std::vector< std::shared_ptr<Obj2BranchBase> > object_dumpers_;
   //provides automatic garbage collection
+  //run lumi evt
+  unsigned int lumi_;
+  unsigned int run_;
+  unsigned long long evt_;
 };
 
 //
@@ -81,6 +85,10 @@ URNTuplizer::URNTuplizer(const edm::ParameterSet& iConfig)
   edm::Service<TFileService> fs;
   std::string treeName = iConfig.getParameter<std::string>("treeName");
   tree_ = fs->make<TTree>(treeName.c_str(), "test");
+  //book fixed branches
+  tree_->Branch("run/i", &run_);
+  tree_->Branch("lumi/i", &lumi_);
+  tree_->Branch("evt/l", &evt_);
 
   PSet objects = iConfig.getParameter<PSet>("objects");
   vstring object_names;
@@ -111,11 +119,17 @@ URNTuplizer::~URNTuplizer()
 void
 URNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-   for(auto&& dumper : object_dumpers_) dumper->clear();
-   for(auto&& dumper : object_dumpers_) dumper->fill(iEvent);
-   //std::cout << "tree dump: Entries: " << tree_->GetEntries() << std::endl;
-   //for(auto&& dumper : object_dumpers_) dumper->debug();
-   tree_->Fill();
+  //fill fixed branches
+  lumi_= iEvent.id().luminosityBlock();
+  run_ = iEvent.id().run();
+  evt_ = iEvent.id().event();
+
+  //fill configurable branches
+  for(auto&& dumper : object_dumpers_) dumper->clear();
+  for(auto&& dumper : object_dumpers_) dumper->fill(iEvent);
+  //std::cout << "tree dump: Entries: " << tree_->GetEntries() << std::endl;
+  //for(auto&& dumper : object_dumpers_) dumper->debug();
+  tree_->Fill();
 }
 
 
