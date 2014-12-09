@@ -1,24 +1,19 @@
 #ifndef VObjBranchExpr_H
 #define VObjBranchExpr_H
 
-#include "CommonTools/Utils/interface/StringObjectFunction.h"
+#include "URAnalysis/Ntuplizer/interface/ObjExpression.h"
+#include "URAnalysis/Utilities/interface/typeConversion.h"
 #include "TTree.h"
 #include <vector>
 #include <iostream>
 #include <memory>
-#include "TMath.h"
-
-template<typename T> T as(double x){ return static_cast<T>(x);} //for long ints should be reinterpret cast both sides (parser too) 
-template<> double as<Double_t>(double x) { return x; } //do nothing
-template<> float as<Float_t>(double x) { return x; } //do nothing
-template<> int as<Int_t>(double x) { return TMath::Nint(x); } //avoid rounding errors
 
 template <typename EDObject, typename VType>
-class VObjBranchExpr {
+class VObjBranchExpr: public ObjExpression<EDObject> {
 public:
   VObjBranchExpr(std::string branch_name, TTree* tree, std::string &expr):
+    ObjExpression<EDObject>(expr),
     branch_vals_(),
-    functor_(expr),
     name_(branch_name)
   {
     //std::cout<<name_ <<": set branch to vals addr: " << &branch_vals_ << std::endl;
@@ -27,16 +22,33 @@ public:
   }
 
   ~VObjBranchExpr(){ /*delete branch_vals_;*/ }
-  void fill(const EDObject &obj) {branch_vals_.push_back( as<VType>(functor_(obj)));}
-  void reserve(size_t i) {branch_vals_.reserve(i);}
-  void clear() {branch_vals_.clear();}
-  void debug() {std::cout<<name_ <<" vals addr: "<< &branch_vals_<< " branch addr: "<< (std::vector<VType>*) branch_->GetAddress() << std::endl;}
+  virtual void fill(const EDObject &obj) {branch_vals_.push_back( ura::as<VType>(this->functor_(obj)));}
+  virtual void reserve(size_t i) {branch_vals_.reserve(i);}
+  virtual void clear() {branch_vals_.clear();}
+  virtual void debug() {std::cout<<name_ <<" vals addr: "<< &branch_vals_<< " branch addr: "<< (std::vector<VType>*) branch_->GetAddress() << std::endl;}
 
 private:
   std::vector<VType> branch_vals_;
   TBranch *branch_;
-  StringObjectFunction<EDObject> functor_;
   std::string name_;
 };
+
+template <typename EDObject>
+ObjExpression<EDObject>* VObjBranchExprFactory(BranchInfo &info, TTree* tree)
+{
+  switch(info.type){
+  case BranchInfo::typeID::USHORT : return new VObjBranchExpr<EDObject, unsigned short>(info.name, tree, info.expr);
+  case BranchInfo::typeID::DOUBLE : return new VObjBranchExpr<EDObject, double>(info.name, tree, info.expr);	       
+  case BranchInfo::typeID::SHORT  : return new VObjBranchExpr<EDObject, short >(info.name, tree, info.expr);	       
+  case BranchInfo::typeID::INT    : return new VObjBranchExpr<EDObject, int>(info.name, tree, info.expr);	       
+  case BranchInfo::typeID::UINT   : return new VObjBranchExpr<EDObject, unsigned int>(info.name, tree, info.expr);  
+  case BranchInfo::typeID::FLOAT  : return new VObjBranchExpr<EDObject, float>(info.name, tree, info.expr);	       
+  case BranchInfo::typeID::LONG   : return new VObjBranchExpr<EDObject, long>(info.name, tree, info.expr);	       
+  case BranchInfo::typeID::BOOL   : return new VObjBranchExpr<EDObject, bool>(info.name, tree, info.expr); 	       
+  case BranchInfo::typeID::ULONG  : return new VObjBranchExpr<EDObject, unsigned long>(info.name, tree, info.expr); 
+  default: return NULL;
+  }
+  //return ret;
+}
 
 #endif 

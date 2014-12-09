@@ -18,21 +18,19 @@ public:
   Collection2Branch(std::string prefix, edm::ParameterSet cfg, TTree *tree):
     src_(cfg.getParameter<edm::InputTag>("src"))
   {
-    edm::ParameterSet branches = cfg.getParameter<edm::ParameterSet>("branches");
-    std::vector< std::string > branch_names = branches.getParameterNames();
-    branches_.reserve(branch_names.size());
-    for(auto&& name : branch_names)
+    std::vector< edm::InputTag > branches = cfg.getParameter<std::vector< edm::InputTag > >("branches");
+    branches_.reserve(branches.size());
+    for(auto&& branch : branches)
       {
-	std::string expr = branches.getParameter<std::string>(name);
-	std::string full_name = prefix+"_"+name;
+	BranchInfo info(prefix, branch);
 	try
 	  {
-	    branches_.push_back(new VObjBranchExpr<EDObject, double>(full_name, tree, expr));
+	    branches_.push_back(VObjBranchExprFactory<EDObject>(info, tree));
 	  }
 	catch(cms::Exception& iException)
 	  {
 	    iException << "Caught exception in building branch: "
-		       << full_name << " with formula: " << expr;
+		       << info.name << " with formula: " << info.expr;
 	    throw;
 	  }
       }
@@ -66,7 +64,7 @@ public:
 private:
   std::string prefix_;
   edm::InputTag src_;
-  std::vector< VObjBranchExpr<EDObject, double>* > branches_;
+  std::vector< ObjExpression<EDObject>* > branches_;
 };
 
 #endif //Collection2Branch
