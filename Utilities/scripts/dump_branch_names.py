@@ -20,7 +20,8 @@ tfile = ROOT.TFile.Open(sys.argv[-2])
 tree = tfile.Get(sys.argv[-1])
 #Get All the branches
 if print_type:
-    print '\n'.join(['%20s %20s' % (branch.GetTypeName(), branch.GetName()) for branch in tree.GetListOfBranches()])
+    print '\n'.join(['%20s %20s' % (branch.GetTypeName() if hasattr(branch, 'GetTypeName') else branch.GetClassName(), branch.GetName()) \
+                         for branch in tree.GetListOfBranches()])
 else:
     print '\n'.join([branch.GetName() for branch in tree.GetListOfBranches()])
 tfile.Close()
