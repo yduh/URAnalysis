@@ -1,0 +1,12 @@
+class {NAME}{
+public:
+  {NAME}({INPUTS}):
+    {MEMBERS_INIT}
+  {}
+  {NAME}():
+    {MEMBERS_VOID_INIT}
+  {}
+  {GETTERS}
+private:
+  {MEMBERS}
+};

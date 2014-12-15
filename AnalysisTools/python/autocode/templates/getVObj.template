@@ -1,0 +1,9 @@
+const vector<{RET_TYPE}>& {NAME}(){
+  if({OBJ_VAR}.size() > 0) return {OBJ_VAR};
+  load{RET_TYPE}s();
+  {ITRATORS}
+  for(; {END_COND}; {IT_INCREMENT}){
+    {OBJ_VAR}.push_back( {RET_TYPE}({IT_DUMP}) );
+  }
+  return {OBJ_VAR};
+}

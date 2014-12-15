@@ -1,0 +1,82 @@
+//#ifndef URStreamer_h
+//#define URStreamer_h
+
+//#include <TROOT.h>
+#include <TChain.h>
+#include <TFile.h>
+
+#include <vector>
+using namespace std;
+
+{OBJECTS_STRUCTS}
+
+class URStreamer{
+public:
+  {PUBLIC_MEMBER_LIST}
+
+  URStreamer(TTree *tree):
+    {MEMBER_INIT}
+  {
+    tree_ = tree;
+    current_entry_ = 0;
+    entries_ = tree_->GetEntries();
+    tree_->SetBranchStatus("*",0); 
+    {BRANCH_SETTING}
+  }
+
+  ~URStreamer()
+  {
+    //{ EVT_DESTROY }
+  }
+
+  bool next(){
+    {EVT_CLEAR}
+    if(current_entry_ < entries_){
+      tree_->GetEntry(current_entry_);
+      current_entry_++;
+      return true;
+    }
+    return false;
+  }
+
+  {LOAD_METHODS}
+
+  {OBJ_GETTERS}
+
+private:
+  TTree *tree_;
+  Long64_t entries_;
+  Long64_t current_entry_;
+  {PRIVATE_MEMBER_LIST}
+};
+
+/*#include <iostream>
+int test()
+{
+  TFile *f = TFile::Open("test_ntuple.root");
+  TTree *t = (TTree*) f->Get("ntuple/events");
+  URStreamer s(t);
+  for(int i =0; i < 30; i++){
+    s.next();
+    vector<Muon> muons = s.muons();
+    std::cout<< muons.size() << std::endl;
+    for(int j=0; j<muons.size(); ++j){
+      std::cout<< *(muons[j].pt) << "  ";
+    }
+    std::cout<< std::endl;
+  }
+  return 0;
+  }*/
+
+/*#ifdef __CINT__
+#pragma link off all globals;
+#pragma link off all classes;
+#pragma link off all functions;
+
+#pragma link C++ class vector+;
+#pragma link C++ class URStreamer+;
+{ LINK_OBJECTS }
+
+#endif*/
+//#endif
+
