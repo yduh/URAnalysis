@@ -17,10 +17,10 @@ git cms-init
 
 # Now get the analysis package
 # Clone the git repository...
-git clone --recursive https://git.cern.ch/ldap/ur-gitmaster URAnalysis
+git clone --recursive https://github.com/mverzett/URAnalysis.git URAnalysis
 
 #...and install the dependencies
-cd placeholder/install
+cd URAnalysis/install
 ./install.sh
 
 #compile
