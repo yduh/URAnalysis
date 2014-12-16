@@ -23,7 +23,7 @@ if [ -d "$vpython" ]; then
 fi
 
 #source site-dependent configuration
-source $URA/Configuration/site/site_configuration.sh
+#source $URA/Configuration/site/site_configuration.sh
 
 # Put the PWD into the PYTHONPATH
 export PYTHONPATH=.:$PYTHONPATH
