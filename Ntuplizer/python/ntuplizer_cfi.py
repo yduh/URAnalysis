@@ -5,23 +5,37 @@ template = [
     cms.InputTag('eta'),
     cms.InputTag('phi'),
     cms.InputTag('charge','','/I'),
+    #cms.InputTag('IsoDB','(chargedIsolation()+max(photonIso()+neutralIso() - pileupIso(),0))')
 ]
 
-ntuple = cms.EDAnalyzer(
-   'URNTuplizer',
-   treeName = cms.string('events'),
-   objects = cms.PSet(
-      muons = cms.PSet(
-         src = cms.InputTag('slimmedMuons'),
-         type = cms.string('MuonCollection2Branch'),
-         branches = cms.VInputTag(template)
-         ),
-      jets = cms.PSet(
-         src = cms.InputTag('slimmedJets'),
-         type = cms.string('JetCollection2Branch'),
-         branches = cms.VInputTag(template)
-         ),
+evtid = cms.EDAnalyzer(
+   'EvtIDProducer'
+)
 
-      #jets....                                                                                                                                           
-      )
-   )
+muons = cms.EDAnalyzer(
+   'NtupleMuonsProducer',
+   src = cms.InputTag('slimmedMuons'),
+   branches = cms.VInputTag(template)
+)
+
+jets = cms.EDAnalyzer(
+   'NtupleJetsProducer',
+   src = cms.InputTag('slimmedJets'),
+   branches = cms.VInputTag(template)
+)
+
+electrons = cms.EDAnalyzer(
+   'NtupleElectronsProducer',
+   src = cms.InputTag('slimmedElectrons'),
+   branches = cms.VInputTag(template)
+)
+
+ntuple = cms.Sequence(
+   evtid +
+   muons +
+   jets +
+   electrons
+)
+
+ntupleEnd = cms.EDAnalyzer('TreeFiller')
+

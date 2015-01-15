@@ -22,3 +22,10 @@ process.TFileService = cms.Service(
 
 process.load('URAnalysis.Ntuplizer.ntuplizer_cfi')
 process.p = cms.Path(process.ntuple)
+process.end = cms.EndPath(
+   process.ntupleEnd
+)
+process.schedule = cms.Schedule(
+   process.p,
+   process.end
+)

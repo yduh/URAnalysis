@@ -8,6 +8,7 @@ class ObjExpression{
 public:
   ObjExpression(std::string &expr):
     functor_(expr) {}
+  virtual ~ObjExpression() {}
   virtual void fill(const EDObject &obj) =0;
   virtual void reserve(size_t i) {}
   virtual void clear() {}

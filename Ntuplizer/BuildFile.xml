@@ -4,6 +4,8 @@
 <use name="URAnalysis/Utilities"/>
 <use name="DataFormats/PatCandidates"/>
 <use name="root"/>
+<use name="PhysicsTools/UtilAlgos"/>
+<use name="FWCore/ServiceRegistry"/> 
 <export>
   <lib   name="URAnalysisNtuplizerPlugins"/>
 </export>
