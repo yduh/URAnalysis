@@ -14,7 +14,9 @@ namespace edm{
 
 class Obj2BranchBase: public edm::EDAnalyzer {
 public:
-  explicit Obj2BranchBase(const edm::ParameterSet& cfg){
+  explicit Obj2BranchBase(const edm::ParameterSet& cfg):
+    tree_(EventTree::getTree())
+  {
     if(cfg.existsAs<std::string>("label")){
       prefix_ = cfg.getParameter<std::string>("label");
     }else{
@@ -29,8 +31,6 @@ public:
 	<< "internally used for branch bookkeeping purposes, please "
 	<< "behave accordingly.";
     }
-    
-    tree_ = EventTree::getTree();
   }
 
 private:
@@ -44,7 +44,7 @@ private:
 
 protected:
   std::string prefix_;
-  TTree *tree_;
+  EventTree & tree_;
 };
 
 #endif

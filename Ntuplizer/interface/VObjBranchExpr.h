@@ -3,6 +3,7 @@
 
 #include "URAnalysis/Ntuplizer/interface/ObjExpression.h"
 #include "URAnalysis/Utilities/interface/typeConversion.h"
+#include "URAnalysis/Ntuplizer/interface/EventTree.h"
 #include "TTree.h"
 #include <vector>
 #include <iostream>
@@ -11,13 +12,13 @@
 template <typename EDObject, typename VType>
 class VObjBranchExpr: public ObjExpression<EDObject> {
 public:
-  VObjBranchExpr(std::string branch_name, TTree* tree, std::string &expr):
+  VObjBranchExpr(std::string branch_name, EventTree& tree, std::string &expr):
     ObjExpression<EDObject>(expr),
     branch_vals_(),
     name_(branch_name)
   {
     //std::cout<<name_ <<": set branch to vals addr: " << &branch_vals_ << std::endl;
-    branch_ = tree->Branch(branch_name.c_str(), &branch_vals_);
+    branch_ = tree.branch(branch_name, &branch_vals_);
     //std::cout<<name_ <<": set branch to vals addr: " << &branch_vals_ << std::endl;
   }
 
@@ -34,7 +35,7 @@ private:
 };
 
 template <typename EDObject>
-ObjExpression<EDObject>* VObjBranchExprFactory(BranchInfo &info, TTree* tree)
+ObjExpression<EDObject>* VObjBranchExprFactory(BranchInfo &info, EventTree& tree)
 {
   switch(info.type){
   case BranchInfo::typeID::USHORT : return new VObjBranchExpr<EDObject, unsigned short>(info.name, tree, info.expr);

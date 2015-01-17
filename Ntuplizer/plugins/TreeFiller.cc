@@ -16,7 +16,7 @@ public:
   ~TreeFiller(){}
 
 private:
-  virtual void analyze(const edm::Event&, const edm::EventSetup&){tree_->Fill();}
+  virtual void analyze(const edm::Event&, const edm::EventSetup&){tree_.fill();}
 };
 
 //define CMSSW plug-ins
