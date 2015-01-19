@@ -54,23 +54,23 @@ photons = cms.EDAnalyzer(
 )
 ntuple += photons
 
-vertex = cms.EDAnalyzer(
+vertexs = cms.EDAnalyzer(
    'NtupleVerticesProducer',
    src = cms.InputTag('offlineSlimmedPrimaryVertices'),
    branches = cms.VPSet(
       branches.vertex_specific
       )
 )
-ntuple += vertex
+ntuple += vertexs
 
-MET = cms.EDAnalyzer(
+METs = cms.EDAnalyzer(
    'NtupleMETProducer',
    src = cms.InputTag('slimmedMETs'),
    branches = cms.VPSet(
       branches.met_specific
       )
 )
-ntuple += MET
+ntuple += METs
 
 #############
 #  MC Only
@@ -86,14 +86,14 @@ ntuple += MET
 #)
 #ntuple += genInfo
 
-PUInfo = cms.EDAnalyzer(
+PUInfos = cms.EDAnalyzer(
    'NtuplePUInfoProducer',
    src = cms.InputTag('addPileupInfo'),
    branches = cms.VPSet(
       branches.puinfo_specific
       )
 )
-ntuple += PUInfo
+ntuple += PUInfos
 
 #genMET = cms.EDAnalyzer(
 genParticles = cms.EDAnalyzer(
