@@ -37,11 +37,12 @@ streamer = cpp_types.StreamerMeta(branches, objects)
 with open('URStreamer.h', 'w') as output:
    output.write(streamer.cpp_dump())
 
-ldef = cpp_types.LinkDefMeta(objects)
-with open('LinkDef.h', 'w') as output:
-   output.write(ldef.cpp_dump())
-
-#Compile macro
-#ROOT.gROOT.ProcessLine('.L URStreamer.C+')
-os.system('rootcint -f Dict.cxx -c ./URStreamer.h LinkDef.h')
-os.system('g++ -Wall -shared -fPIC -o Dict.so Dict.cxx `root-config --cflags --glibs`')
+## NOT NEEDED AS THE CODE IS IN C++
+## ldef = cpp_types.LinkDefMeta(objects)
+## with open('LinkDef.h', 'w') as output:
+##    output.write(ldef.cpp_dump())
+## 
+## #Compile macro
+## #ROOT.gROOT.ProcessLine('.L URStreamer.C+')
+## os.system('rootcint -f Dict.cxx -c ./URStreamer.h LinkDef.h')
+## os.system('g++ -Wall -shared -fPIC -o Dict.so Dict.cxx `root-config --cflags --glibs`')
