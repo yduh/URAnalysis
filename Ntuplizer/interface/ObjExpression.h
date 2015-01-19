@@ -2,6 +2,7 @@
 #define ObjExpression_H
 
 #include "CommonTools/Utils/interface/StringObjectFunction.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 template <typename EDObject>
 class ObjExpression{
@@ -31,22 +32,23 @@ struct BranchInfo{
     LONG, 
     ULONG,
     BOOL    };
-  BranchInfo(std::string& prefix, const edm::InputTag &tag):
-    name(prefix+"_"+tag.label()),
-    expr((tag.instance().empty()) ? tag.label() : tag.instance()),
-    str_type((tag.process().empty()) ? "/D" : tag.process())
+  BranchInfo(std::string& prefix, const edm::ParameterSet &tag):
+    name(prefix+"_"+tag.getParameter<std::string>("name")),
+    expr(tag.getParameter<std::string>("expr")),
+    str_type(tag.getParameter<std::string>("type"))
   {
-    if(tag.process().empty()) type = DOUBLE;
-    else if(tag.process() == "/D") type = DOUBLE;
-    else if(tag.process() == "/S") type = SHORT ;
-    else if(tag.process() == "/s") type = USHORT;
-    else if(tag.process() == "/I") type = INT   ;
-    else if(tag.process() == "/i") type = UINT  ;
-    else if(tag.process() == "/F") type = FLOAT ;
-    else if(tag.process() == "/L") type = LONG  ;
-    else if(tag.process() == "/l") type = ULONG ;
-    else if(tag.process() == "/O") type = BOOL  ;
-    else type = DOUBLE;
+    if(expr.empty()) expr = tag.getParameter<std::string>("name");
+    if(str_type.empty()) str_type = "/F";
+    if(str_type == "/D") type = DOUBLE;
+    else if(str_type == "/S") type = SHORT ;
+    else if(str_type == "/s") type = USHORT;
+    else if(str_type == "/I") type = INT   ;
+    else if(str_type == "/i") type = UINT  ;
+    else if(str_type == "/F") type = FLOAT ;
+    else if(str_type == "/L") type = LONG  ;
+    else if(str_type == "/l") type = ULONG ;
+    else if(str_type == "/O") type = BOOL  ;
+    else type = FLOAT;
   }
 
   std::string name, expr, str_type;

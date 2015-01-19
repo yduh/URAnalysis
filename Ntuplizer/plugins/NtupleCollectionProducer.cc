@@ -39,7 +39,7 @@ NtupleCollectionProducer<EDObject>::NtupleCollectionProducer(edm::ParameterSet c
   Obj2BranchBase(cfg),
   src_(cfg.getParameter<edm::InputTag>("src"))
 {
-  std::vector< edm::InputTag > branches = cfg.getParameter<std::vector< edm::InputTag > >("branches");
+  std::vector< edm::ParameterSet > branches = cfg.getParameter<std::vector< edm::ParameterSet > >("branches");
   branches_.reserve(branches.size());
   for(auto&& branch : branches)
     {
@@ -90,18 +90,30 @@ void NtupleCollectionProducer<EDObject>::analyze(const edm::Event& evt, const ed
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/Photon.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 //CMSSW does not like templates, so use typedefs
 typedef NtupleCollectionProducer<pat::Muon> NtupleMuonsProducer;
 typedef NtupleCollectionProducer<pat::Electron> NtupleElectronsProducer;
 typedef NtupleCollectionProducer<pat::MET> NtupleMETProducer;
 typedef NtupleCollectionProducer<pat::Jet> NtupleJetsProducer;
+typedef NtupleCollectionProducer<pat::Photon> NtuplePhotonsProducer;
+typedef NtupleCollectionProducer<reco::Vertex> NtupleVerticesProducer; 
+typedef NtupleCollectionProducer<PileupSummaryInfo> NtuplePUInfoProducer; 
+typedef NtupleCollectionProducer<reco::GenParticle> NtupleGenParticlesProducer; 
 
 //define CMSSW plug-ins
 DEFINE_FWK_MODULE(NtupleMuonsProducer);
 DEFINE_FWK_MODULE(NtupleElectronsProducer);
 DEFINE_FWK_MODULE(NtupleMETProducer);
 DEFINE_FWK_MODULE(NtupleJetsProducer);
+DEFINE_FWK_MODULE(NtuplePhotonsProducer);
+DEFINE_FWK_MODULE(NtupleVerticesProducer);
+DEFINE_FWK_MODULE(NtuplePUInfoProducer);
+DEFINE_FWK_MODULE(NtupleGenParticlesProducer);
 
 
 
