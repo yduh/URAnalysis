@@ -39,12 +39,9 @@ class EventTree{
 
   void fill(){tree_->Fill();}
 
-  //This might give some conflicts, to be checked
-  ~EventTree(){
-    edm::Service<TFileService> fs;
-    fs->file().cd();
-    tree_->Write();
-  }
+  ~EventTree(){}
+  //actually not needed, the TFileService takes care of
+  //everything
 
  private:
   EventTree(){
