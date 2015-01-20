@@ -9,6 +9,27 @@
 #include <iostream>
 #include <memory>
 
+/*
+class: ObjBranchExpr<EDObject, VType>
+
+This class provides the implementation of a single element TTree branch filled 
+with a StringObjectFunction. 
+The first template argument defines the EDObject on which the functor operates,
+while the second template provides the output collection type.
+
+WARNING: As every return value computed by StringObjectFunction () operator is
+by default a double, rounding errors for big numbers WILL happen. This makes
+this option not suitable for long ints and similar where every bit counts.
+The final return value is just a type cast from double, in order to save space.
+
+To evercome this effect the internal implementation of StringObjectFunction's
+grammar should be changed, returning instead of the static_cast of the variable
+the reinterpret_cast, but this gets beyond the scope of this framework and would 
+break backward compatibility and the physical meaning of the number.
+
+Author: Mauro Verzetti (UR)
+ */
+
 template <typename EDObject, typename Type>
 class ObjBranchExpr: public ObjExpression<EDObject> {
 public:
@@ -31,6 +52,16 @@ private:
   TBranch *branch_;
   std::string name_;
 };
+
+/*
+function: ObjBranchExprFactory<EDObject>
+
+This factory specializes the second template argument of ObjBranchExpr, 
+providing the proper vector type according to the information encoded in
+BranchInfo (defined in: URAnalysis/Ntuplizer/interface/ObjExpression.h).
+
+Author: Mauro Verzetti (UR)
+ */
 
 template <typename EDObject>
 ObjExpression<EDObject>* ObjBranchExprFactory(BranchInfo &info, EventTree& tree)

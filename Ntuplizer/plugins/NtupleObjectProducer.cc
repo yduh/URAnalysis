@@ -1,3 +1,19 @@
+/*
+class: NtupleObjectProducer<EDObject>
+
+EDAnalyzer that produces information on a single EDObject 
+and stores them in an URNtuple.
+
+The variable computation and branch filling is outsourced
+to ObjBranchExpr, while this class takes care of branch 
+bookkeeping.
+
+Template specialization and consequent CMSSW plug-in
+definition at the end of the file. 
+
+Author: Mauro Verzetti (UR)
+ */
+
 // system include files
 #include <memory>
 

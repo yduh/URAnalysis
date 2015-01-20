@@ -13,6 +13,15 @@
 #include "TTree.h"
 #include <iostream>
 
+/*
+class: EvtIDProducer
+
+Simple, hard-coded EDAnalyzer that produces eventID information (run, lumi and 
+event number) and puts in the URNtuple
+
+Author: Mauro Verzetti
+ */
+
 class EvtIDProducer: public Obj2BranchBase{
 public:
   EvtIDProducer(edm::ParameterSet cfg);

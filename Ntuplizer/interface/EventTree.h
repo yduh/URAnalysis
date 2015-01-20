@@ -1,5 +1,6 @@
 /*
-Singleton class that provides the instance of the TTree where to write the events
+Singleton class that provides the instance of the TTree where to write the events.
+Singleton skeleton taken from http://stackoverflow.com/questions/1008019/c-singleton-design-pattern 
 
 Author: Mauro Verzetti (UR)
  */
@@ -20,13 +21,14 @@ class EventTree{
   static EventTree& getTree(){
     static EventTree instance;
     return instance; //instance.tree();
-    //return instance;
   }
   //TTree* tree(){return tree_;}
 
+  //Templated version of Branch, mapping to the appropriate
+  //one of ROOT::TTree, but with duplicate branch check
   template<typename ... Args>
   TBranch* branch(std::string name, Args ... args){
-    //std::cout<< "trying to create branch: " << name << std::endl;
+    //duplicate branch check
     if(branch_names_.find(name) != branch_names_.end()){
       throw edm::Exception(edm::errors::Configuration) 
 	<< "branch name: " << name << " has been already defined!";
@@ -37,19 +39,23 @@ class EventTree{
 
   void fill(){tree_->Fill();}
 
+  //This might give some conflicts, to be checked
   ~EventTree(){
     edm::Service<TFileService> fs;
     fs->file().cd();
     tree_->Write();
   }
+
  private:
   EventTree(){
     edm::Service<TFileService> fs;
     fs->file().cd();
     tree_ = new TTree("Events", "test");
   }
+
   EventTree(EventTree const&);             
   void operator=(EventTree const&);
+
   TTree *tree_;
   std::set<std::string> branch_names_;
 };

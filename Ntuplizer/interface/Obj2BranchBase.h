@@ -1,6 +1,15 @@
 #ifndef Obj2BranchBase_H
 #define Obj2BranchBase_H
 
+/*
+  class: Obj2BranchBase
+  Base EDAnalyzer providing basic functionalities (tree access, object label)
+  to convert an EDObject into a URNtuple one.
+  Functionalities are propagated by public iheritance.
+
+  author: Mauro Verzetti (UR)
+ */
+
 #include <string>
 #include "URAnalysis/Ntuplizer/interface/EventTree.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -17,6 +26,9 @@ public:
   explicit Obj2BranchBase(const edm::ParameterSet& cfg):
     tree_(EventTree::getTree())
   {
+    //the 'label' attribute overrides the module_label one.
+    //module_label is how you call the analyzer in the cfg
+    //e.g. process.foo = cms.EDAnalyzer 'foo' is the module_label
     if(cfg.existsAs<std::string>("label")){
       prefix_ = cfg.getParameter<std::string>("label");
     }else{

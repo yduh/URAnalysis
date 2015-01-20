@@ -1,6 +1,17 @@
 #ifndef ObjExpression_H
 #define ObjExpression_H
 
+/*
+class: ObjExpression<EDObject>
+Simple abstract class wrapping around the StringObjectFunction<> class. 
+Provides some additional virtual methods for derived classes to use.
+
+Public inheritance might have been an option, but with weird tamplated
+classes like StringObjectFunction it's always a risk.
+
+Author: Mauro Verzetti (UR)
+ */
+
 #include "CommonTools/Utils/interface/StringObjectFunction.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
@@ -20,6 +31,19 @@ protected:
 };
 
 #include "FWCore/Utilities/interface/InputTag.h"
+
+/*
+class: BranchInfo
+
+Struct that provides unified method to extract the relevant information 
+from an edm::PSet and make it usable for ObjExpression derived classes.
+
+Implemented here to avoid excessive proliferation of header files, also
+because the struct was designed and intended to specifically work with
+ObjExpression daughters.
+
+Author: Mauro Verzetti
+*/ 
 
 struct BranchInfo{
   enum typeID {

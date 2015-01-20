@@ -1,3 +1,23 @@
+/*
+class: NtupleCollectionProducer<EDObject>
+
+EDAnalyzer that produces information on a EDCollection 
+(vector of EDObjects) and stores them in an URNtuple.
+
+The variable computation and branch filling is outsourced
+to VObjBranchExpr, while this class takes care of branch 
+bookkeeping and enforces consistency between different 
+branches, i.e. different variables pertaining to the same 
+object are stored in the same vector position in the 
+respective branches.
+
+Template specialization and consequent CMSSW plug-in
+definition at the end of the file. 
+
+Author: Mauro Verzetti (UR)
+ */
+
+
 // system include files
 #include <memory>
 

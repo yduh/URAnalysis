@@ -1,3 +1,13 @@
+/*
+class: TreeFiller
+
+This EDAnalyzer does nothing but filling the tree, marking the end of the event.
+It should therefore be always used only once per cfg and in the EndPath, to 
+ensure that the Ntuple filling has been completed. 
+
+Author: Mauro Verzetti (UR)
+*/
+
 // system include files
 #include <memory>
 
