@@ -65,7 +65,7 @@ private:
   // ----------member data ---------------------------
   TTree *meta_tree_;
   std::map<std::string, std::string> to_json_;
-  bool string_dumped_;
+  bool string_dumped_, isMC_;
   MonitorElement *pu_distro_;
   unsigned int lumi_;
   unsigned int run_;
@@ -84,7 +84,8 @@ private:
 // constructors and destructor
 //
 MetaNtuplizer::MetaNtuplizer(const edm::ParameterSet& iConfig):
-  string_dumped_(false)
+  string_dumped_(false),
+  isMC_(iConfig.getParameter<bool>("isMC"))
 {
   edm::Service<TFileService> fs;
 
@@ -109,12 +110,15 @@ MetaNtuplizer::MetaNtuplizer(const edm::ParameterSet& iConfig):
 void 
 MetaNtuplizer::endJob() 
 {
-  DQMStore& dqmStore = (*edm::Service<DQMStore>());
-  pu_distro_ = dqmStore.get("PUDistribution");
-
   edm::Service<TFileService> fs;
   fs->file().cd();
-  pu_distro_->getTH1F()->Write();
+
+  if(isMC_){
+    //std::cout<< "accessing DQM Store!" << std::endl;
+    DQMStore& dqmStore = (*edm::Service<DQMStore>());
+    pu_distro_ = dqmStore.get("PUDistribution");
+    pu_distro_->getTH1F()->Write();
+  }
 
   std::stringstream stream;
   stream << "{" << std::endl;

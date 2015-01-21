@@ -4,6 +4,7 @@ import time
 
 metaTree = cms.EDAnalyzer(
     'MetaNtuplizer',
+    isMC=cms.bool(False),
     commit=cms.string( version.git_version()),
     user=cms.string(   version.get_user()),
     cmsswVersion= cms.string( version.cmssw_version()),
