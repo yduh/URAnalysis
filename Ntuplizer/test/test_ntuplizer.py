@@ -20,10 +20,15 @@ process.TFileService = cms.Service(
         fileName = cms.string("test_ntuple.root")
 )
 
-process.load('URAnalysis.Ntuplizer.ntuplizer_cfi')
-process.p = cms.Path(process.ntuple)
+import URAnalysis.Ntuplizer.ntuplizer as ntuplizer
+ntuple_seq, ntuple_end = ntuplizer.make_ntuple(
+   process,
+   True
+   )
+
+process.p = cms.Path(ntuple_seq)
 process.end = cms.EndPath(
-   process.ntupleEnd
+   ntuple_end
 )
 process.schedule = cms.Schedule(
    process.p,
