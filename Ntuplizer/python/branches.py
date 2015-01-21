@@ -207,8 +207,8 @@ geninfo_scpecific = [
    make_branch_pset('weight'),
    make_branch_pset('pdfid1', 'pdf().id.first'),
    make_branch_pset('pdfid2', 'pdf().id.second'),
-   make_branch_pset('x1', 'pdf()->x.first'),
-   make_branch_pset('x2', 'pdf()->x.second'),
+   #make_branch_pset('x1', 'pdf()->x.first'),
+   #make_branch_pset('x2', 'pdf()->x.second'),
    make_branch_pset('renScale', 'qScale()'),
    #make_branch_pset('FacScale', 'qScale());
 ]
