@@ -178,7 +178,7 @@ class ObjStruct(object):
    
       def cpp_getter(self):
          'C++ variable'
-         return '%s %s() {return *%s;}' % (self.type, self.var[:-1], self.var)
+         return '%s %s() const {return *%s;}' % (self.type, self.var[:-1], self.var)
 
       def cpp_input(self):
          'C++ var input'
