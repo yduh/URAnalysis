@@ -41,6 +41,15 @@ kinematics = [
    make_branch_pset('charge','','/I'),
 ]
 
+trigger = [
+   make_branch_pset(
+      i.replace('_',''), 
+      'matching_path("HLT_%s_v*").accept' % i,
+      '/O'
+      )
+   for i in trigger_paths
+]
+
 isolation = [
    #Isolation
    make_branch_pset('chargedIso', 'chargedHadronIso'),

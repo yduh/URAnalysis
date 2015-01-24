@@ -27,6 +27,17 @@ def make_ntuple(
       )
    ntuple += process.evtid
 
+   if 'trigger' in kwargs:
+      process.trigger = cms.EDAnalyzer(
+         'NtupleTriggerEventProducer',
+         src = cms.InputTag(
+            kwargs['trigger']
+            ),
+         branches = cms.VPSet(
+            branches.trigger)
+         )
+      ntuple += process.trigger
+
    process.muons = cms.EDAnalyzer(
       'NtupleMuonsProducer',
       src = cms.InputTag(

@@ -10,7 +10,8 @@ def customize(process, isMC=True, **collections):
     #when changing something have a look at the module
     #itself
     process.load('URAnalysis.PATTools.objects.trigger')
-
+    collections['trigger'] = 'triggerEvent'
+    
     process.load('URAnalysis.PATTools.objects.muons')
     collections['muons'] = cfgtools.chain_sequence(
         process.customMuons,
