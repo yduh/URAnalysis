@@ -5,7 +5,7 @@ Author: Mauro Verzetti
 '''
 from copy import deepcopy
 
-class struct:
+class Struct:
     def __init__(self, **entries): 
         self.__dict__.update(entries)
 
@@ -13,6 +13,9 @@ class struct:
         newd = deepcopy(self.__dict__)
         newd.update(subs)
         return struct(**newd)
+
+    def __hash__(self):
+        return self.__dict__.__repr__().__hash__()
 
 class RecursiveStruct:
     def __init__(self, **entries):
