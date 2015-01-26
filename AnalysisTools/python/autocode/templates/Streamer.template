@@ -1,5 +1,5 @@
-//#ifndef URStreamer_h
-//#define URStreamer_h
+#ifndef URStreamer_h
+#define URStreamer_h
 
 //#include <TROOT.h>
 #include <TChain.h>
@@ -78,5 +78,5 @@ int test()
 { LINK_OBJECTS }
 
 #endif*/
-//#endif
+#endif
 

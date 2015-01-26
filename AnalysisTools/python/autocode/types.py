@@ -133,6 +133,10 @@ class ObjectMeta(object):
    def _vobj_getter(self):
       #make iterators
       #self.as_struct.name
+      #iterators = '\n'.join(
+         #'auto it_{var} = {var}->begin();'.format(
+            #var = i.var) for i in self.branches
+         #)
       iterators = '\n'.join(
          'auto it_{var} = {var}->cbegin();'.format(
             var = i.var) for i in self.branches
@@ -140,11 +144,11 @@ class ObjectMeta(object):
       end_cond = 'it_{var} != {var}->cend()'.format(
          var=self.branches[0].var
          )
-      it_increment = ', '.join(
-         '++it_%s' % i.var for i in self.branches
+      it_increment = '\n'.join(
+         '++it_%s;' % i.var for i in self.branches
          )
-      it_dump = ', '.join(
-         '*it_%s' % i.var for i in self.branches
+      it_dump = '\n'.join(
+         'obj.set%s(*it_%s);' % (i.var.split('_')[1],i.var) for i in self.branches
          )
       return cpp_format(
          ObjectMeta.vgetter_template,
@@ -174,11 +178,16 @@ class ObjStruct(object):
 
       def cpp_var(self):
          'C++ variable'
-         return 'const %s *%s;' % (self.type, self.var)
+         return '%s %s;' % (self.type, self.var)
    
       def cpp_getter(self):
          'C++ variable'
-         return '%s %s() {return *%s;}' % (self.type, self.var[:-1], self.var)
+         return '%s %s() const {return %s;}' % (self.type, self.var[:-1], self.var)
+ 
+      def cpp_setter(self):
+         'C++ variable'
+         #return 'void set%s(const %s& value) {%s = value; std::cout << "in setter: %s = " << %s << ", *%s = " << *%s << std::endl;}' % (self.var[:-1], self.type,  self.var,self.var,self.var,self.var,self.var)
+         return 'void set%s(const %s value) {%s = value;}' % (self.var[:-1], self.type,  self.var,)
 
       def cpp_input(self):
          'C++ var input'
@@ -207,7 +216,7 @@ class ObjStruct(object):
       inputs = ','.join(
          i.cpp_input() for i in self.members
          )
-      init = ',\n'.join(
+      init = ',\n//'.join(
          i.cpp_init() for i in self.members
          )
       void_init = ',\n'.join(
@@ -215,6 +224,9 @@ class ObjStruct(object):
          )
       getters = '\n'.join(
          i.cpp_getter() for i in self.members
+         )
+      setters = '\n'.join(
+         i.cpp_setter() for i in self.members
          )
       return cpp_format(
          ObjStruct.cpp_template,
@@ -224,6 +236,7 @@ class ObjStruct(object):
          MEMBERS_INIT=init,
          MEMBERS_VOID_INIT=void_init,
          GETTERS=getters,
+         SETTERS=setters,
          )
 
    def cpp_link(self):
