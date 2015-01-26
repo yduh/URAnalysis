@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if which grid-proxy-info >/dev/null; then
-    echo "grid env already sourced"
-else
-    echo "sourcing grid env"
-    source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.sh
-fi
+## if which grid-proxy-info >/dev/null; then
+##     echo "grid env already sourced"
+## else
+##     echo "sourcing grid env"
+##     source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.sh
+## fi
 
 if which crab >&/dev/null; then
     echo "crab env already sourced, make sure it's crab 3!"
