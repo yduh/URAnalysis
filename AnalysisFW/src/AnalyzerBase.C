@@ -5,9 +5,6 @@
 
 
 #include "AnalyzerBase.h"
-//#include "URStandardSelectors.h"
-
-
 
 
 AnalyzerBase::~AnalyzerBase()

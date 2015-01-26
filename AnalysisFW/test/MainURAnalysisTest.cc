@@ -10,7 +10,6 @@
 
 int main(int argc, char *argv[])
 {
-  
   FileOpener f;
   TChain* tree = new TChain("Events");
   TChain* metadata = new TChain("metadata");

@@ -3,8 +3,6 @@
 
 #include <string>
 
-
-
 class URStreamer;
 
 class URSelector
@@ -63,3 +61,4 @@ URSelector& URSelector::operator&&(URSelector& other)
 
 
 #endif // URSelector_h
+
