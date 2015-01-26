@@ -5,10 +5,10 @@
 Installation
 ============
 
-Current CMSSW version supported is CMSSW_7_0_7_patch1
+Current CMSSW version supported is CMSSW_7_2_3_patch1
 
 ```
-scram pro -n MyWorkingAreaName CMSSW CMSSW_7_0_7_patch1
+scram pro -n MyWorkingAreaName CMSSW CMSSW_7_2_3_patch1
 cd MyWorkingAreaName/src
 # Setup your CMSSW environment
 cmsenv
@@ -17,7 +17,7 @@ git cms-init
 
 # Now get the analysis package
 # Clone the git repository...
-git clone --recursive https://github.com/mverzett/URAnalysis.git URAnalysis
+git clone --recursive https://git.cern.ch/ldap/ur-gitmaster URAnalysis
 
 #...and install the dependencies
 cd URAnalysis/install
