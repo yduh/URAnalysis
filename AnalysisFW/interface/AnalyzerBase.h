@@ -24,6 +24,19 @@ class AnalyzerBase
       InitSelector();
     };
     ~AnalyzerBase();
+    
+    // To be run inside the thread
+    virtual void analyze() = 0;
+    virtual void begin() = 0;
+    virtual void end() = 0;
+    
+    // To be run at the end
+    virtual void postProcess() = 0;
+    
+    void setTree(TTree* tree);
+    
+    // FIXME: this should NOT be called inside a thread... how to do so?
+    static virtual void setOptions();
 
     friend class URSelector;
 
