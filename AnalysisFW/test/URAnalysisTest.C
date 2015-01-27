@@ -26,6 +26,8 @@ void URAnalysisTest::Analyze()
     {
       float muon_pt = muon->pt();
       std::cout << "muon pt = " << muon_pt << std::endl;
+      bool isGlobal = muon->isGlobal();
+      std::cout << "Muon is global = " << isGlobal << std::endl;
     }
   }
 
