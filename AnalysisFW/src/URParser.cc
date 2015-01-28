@@ -38,6 +38,9 @@ void URParser::help()
 
 void URParser::parseArguments()
 {
+  //avoid repeating parsing, it's dangerous!
+  if(parsed_) return;
+  parsed_ = true;
   opts::options_description cli_opts;
   for(auto it = opts_.begin(); it != opts_.end(); ++it)
     if(it->second.visibility == ALL || it->second.visibility == CLI)
@@ -52,22 +55,25 @@ void URParser::parseArguments()
     std::exit(0);
   }
 
-  std::string config_file = vmap_["config"].as<std::string>();
-  std::ifstream ifs(config_file.c_str());
-  if(!ifs)
+  if(vmap_.count("config"))
   {
-    std::cout << "can not open config file: " << config_file << std::endl;
-    std::exit(1);
-  }
-  else
-  {
-    opts::options_description cfg_opts;
-    for(auto it = opts_.begin(); it != opts_.end(); ++it)
-      if(it->second.visibility == ALL || it->second.visibility == CFG)
-	cfg_opts.add(it->second.value);
+    std::string config_file = vmap_["config"].as<std::string>();
+    std::ifstream ifs(config_file.c_str());
+    if(!ifs)
+    {
+      std::cout << "can not open config file: " << config_file << std::endl;
+      throw 42;
+    }
+    else
+    {
+      opts::options_description cfg_opts;
+      for(auto it = opts_.begin(); it != opts_.end(); ++it)
+	if(it->second.visibility == ALL || it->second.visibility == CFG)
+	  cfg_opts.add(it->second.value);
 
-    store(parse_config_file(ifs, cfg_opts), vmap_);
-    notify(vmap_);
+      store(parse_config_file(ifs, cfg_opts), vmap_);
+      notify(vmap_);
+    }
   }
 }
 

@@ -41,7 +41,8 @@ private:
     opts_(),
     args_(),
     argc_(0),
-    argv_(0)
+    argv_(0),
+    parsed_(false)
   {
     opts::options_description &generic = optionGroup("generic", "general-purpose command-line-only options", CLI);
     generic.add_options()
@@ -75,6 +76,7 @@ private:
 
   int argc_;
   char** argv_;
+  bool parsed_;
 };
 
 #endif
