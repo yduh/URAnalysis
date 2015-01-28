@@ -24,9 +24,9 @@ class AnalyzerBase
       InitSelector();
     };
     ~AnalyzerBase();
-    
+     
     // To be run inside the thread
-    virtual void analyze() = 0;
+    virtual void analyze() = 0; 
     virtual void begin() = 0;
     virtual void end() = 0;
     
@@ -36,9 +36,9 @@ class AnalyzerBase
     void setTree(TTree* tree);
     
     // FIXME: this should NOT be called inside a thread... how to do so?
-    static virtual void setOptions();
+//     static virtual void setOptions();
 
-    friend class URSelector;
+//     friend class URSelector;
 
   private:
     void InitSelector();
@@ -47,7 +47,7 @@ class AnalyzerBase
     
   protected:
     URStreamer* event;
-    URSelector* s;
+//     URSelector* s;
     std::string sampleName;
     int maxEvents;
     std::string text;

@@ -10,13 +10,13 @@
 
 int main(int argc, char *argv[])
 {
-    
+  
   FileOpener f;
   TChain* tree = new TChain("Events");
   TChain* metadata = new TChain("metadata");
   tree = f.OpenFile("test", tree, metadata);
   URAnalysisTest* a = new URAnalysisTest("test", "test2", -1, tree);
-  a->Analyze();
+  a->analyze();
   return 0;
   
   

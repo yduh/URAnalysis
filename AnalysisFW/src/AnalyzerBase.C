@@ -24,7 +24,7 @@ void AnalyzerBase::Initialize(const std::string myName_, const std::string sampl
 
 void AnalyzerBase::InitSelector()
 {
-  s = new URSelector(this, text); // New approach to selectors
+//   s = new URSelector(); // New approach to selectors
 }
 
 

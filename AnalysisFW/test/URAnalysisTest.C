@@ -8,7 +8,24 @@
 #include "URAnalysisTest.h"
 // #include "../utilities/constants.h"
 
-void URAnalysisTest::Analyze()
+
+
+void URAnalysisTest::begin()
+{}
+
+
+
+void URAnalysisTest::end()
+{}
+
+
+
+void URAnalysisTest::postProcess()
+{}
+
+
+
+void URAnalysisTest::analyze()
 {
 //   if (fChain == 0) return;
 
@@ -19,6 +36,13 @@ void URAnalysisTest::Analyze()
   // Book histograms here
 
   
+  URMuonsSelector* muonSelector = new URMuonsSelector;
+  URElectronsSelector* electronSelector = new URElectronsSelector;
+  URJetsSelector* jetsSelector = new URJetsSelector;
+  URSelectorBase* muOrEleSelector = (*muonSelector)||electronSelector; 
+  URSelectorBase* muAndEleSelector = (*muonSelector)&&electronSelector;
+  URSelectorBase* complexSelector = (*muOrEleSelector)&&jetsSelector;
+  
   while(event->next())
   {
     const vector<Muon>& Muons = event->muons();
@@ -28,7 +52,17 @@ void URAnalysisTest::Analyze()
       std::cout << "muon pt = " << muon_pt << std::endl;
       bool isGlobal = muon->isGlobal();
       std::cout << "Muon is global = " << isGlobal << std::endl;
+      bool isMuSelected = muonSelector->select(event);
+      bool isEleSelected = electronSelector->select(event);
+      bool isJetsSelected = jetsSelector->select(event);
+      bool isMuOrEleSelected = muOrEleSelector->select(event);
+      bool isMuAndEleSelected = muAndEleSelector->select(event);
+      bool isComplexSelected = complexSelector->select(event);
+      
+      std::cout << "isMuSelected = " << isMuSelected << ", isEleSelected = " << isEleSelected << ", isJetsSelected = " << isJetsSelected << std::endl;
+      std::cout << "isMuOrEleSelected = " << isMuOrEleSelected << ", isMuAndEleSelected = " << isMuAndEleSelected << ", isComplexSelected = " << isComplexSelected << std::endl;
     }
+    
   }
 
 //   Long64_t nbytes = 0, nb = 0;
