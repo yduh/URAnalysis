@@ -13,6 +13,9 @@ export URA_BASE=$CMSSW_BASE/src
 #source site-dependent configuration
 source $URA/Configuration/site/site_configuration.sh
 
+#re-run cmsenv, crab tends to screw up many things
+eval `scramv1 runtime -sh`
+
 vpython=$base/URAnalysis/external/virtualenv
 echo "Activating python virtualenv from $vpython"
 
