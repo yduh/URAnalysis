@@ -10,6 +10,9 @@ echo "Setting variable \$URA=$URA"
 
 export URA_BASE=$CMSSW_BASE/src
 
+#source site-dependent configuration
+source $URA/Configuration/site/site_configuration.sh
+
 vpython=$base/URAnalysis/external/virtualenv
 echo "Activating python virtualenv from $vpython"
 
@@ -21,9 +24,6 @@ if [ -d "$vpython" ]; then
   source bin/activate
   popd
 fi
-
-#source site-dependent configuration
-#source $URA/Configuration/site/site_configuration.sh
 
 # Put the PWD into the PYTHONPATH
 export PYTHONPATH=.:$PYTHONPATH

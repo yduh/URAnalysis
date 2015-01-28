@@ -1,5 +1,7 @@
 import FWCore.ParameterSet.Config as cms
-
+from URAnalysis.PATTools.objects.trigger import trigger_paths
+paths_mu = [i for i in trigger_paths if 'Mu' in i]
+paths_el = [i for i in trigger_paths if 'Ele' in i]
 #FIXME: probably not the best possible name
 #FIXME: move to PSet
 ## def add_derived_info(branches, obj, name_prefix=''):
@@ -39,6 +41,15 @@ kinematics = [
    make_branch_pset('charge','','/I'),
 ]
 
+trigger = [
+   make_branch_pset(
+      i.replace('_',''), 
+      'matching_path("HLT_%s_v*").accept' % i,
+      '/O'
+      )
+   for i in trigger_paths
+]
+
 isolation = [
    #Isolation
    make_branch_pset('chargedIso', 'chargedHadronIso'),
@@ -72,6 +83,19 @@ muon_specific = [
    #make_branch_pset('isSoft',   'isSoftMuon',   '/O'),
    #make_branch_pset('isHighPt', 'isHighPtMuon', '/O'),
 ]
+muon_specific.extend(
+   make_branch_pset(
+      i.replace('_',''),
+      'userInt("%s")' % i, '/O') for i in paths_mu
+)
+#muon_specific.append(
+#   make_branch_pset(
+#      'testMatchMuonsIsoMu20eta2p1', 
+#      'triggerObjectMatches().size()',
+#      '/O'
+#      )
+#   )
+
 
 btaggging = [
    make_branch_pset('jetBProb', 'bDiscriminator("jetBProbabilityBJetTags")'),
@@ -157,6 +181,11 @@ electron_specific = [
    make_branch_pset('ecalSeed', 'ecalDrivenSeed', '/O'),
    make_branch_pset('trackSeed', 'trackerDrivenSeed', '/O'),
 ]
+electron_specific.extend(
+   make_branch_pset(
+      i.replace('_',''),
+      'userInt("%s")' % i, '/O') for i in paths_el
+)
 
 super_cluster_specific = [
    make_branch_pset('x', 'superCluster().x'),

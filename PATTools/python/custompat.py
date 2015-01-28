@@ -6,6 +6,12 @@ def customize(process, isMC=True, **collections):
     '''Returns a tuple containing the custom PAT 
     Sequence label and final collection names'''
     #load custom objects
+    #trigger is a mess, does not respect conding conventions
+    #when changing something have a look at the module
+    #itself
+    process.load('URAnalysis.PATTools.objects.trigger')
+    collections['trigger'] = 'triggerEvent'
+    
     process.load('URAnalysis.PATTools.objects.muons')
     collections['muons'] = cfgtools.chain_sequence(
         process.customMuons,
@@ -25,8 +31,9 @@ def customize(process, isMC=True, **collections):
         )
 
     process.customPAT = cms.Sequence(
-        process.customMuons +
-        process.customElectrons +
+        process.customTrigger *
+        process.customMuons *
+        process.customElectrons *
         process.customJets
         )
 

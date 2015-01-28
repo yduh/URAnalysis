@@ -14,6 +14,7 @@ process = cms.Process("PATPlusNtuple")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
+process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
 process.maxEvents = cms.untracked.PSet( 
    input = cms.untracked.int32(
       options.maxEvents
@@ -88,14 +89,15 @@ for skim in skim_sequences:
          process.meta *
          getattr(process, skim) *
          custom_pat_sequence *
-         ntuple_sequence
+         ntuple_sequence *
+         ntuple_end
          )
       )
    process.schedule.append(
       getattr(process, path_name)
       )
 
-process.end = cms.EndPath(
-   ntuple_end
-)
-process.schedule.append(process.end)
+## process.end = cms.EndPath(
+##    ntuple_end
+## )
+## process.schedule.append(process.end)

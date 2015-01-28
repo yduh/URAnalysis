@@ -1,9 +1,13 @@
-<library file="*.cc" name="PlaceholderPatToolsPlugins">
+<library file="*.cc" name="URAnalysisPatToolsPlugins">
   <flags EDM_PLUGIN="1"/>
   <use name="FWCore/Framework"/>
+  <use name="FWCore/Common"/>
+  <use name="URAnalysis/DataFormats"/>
   <use name="FWCore/PluginManager"/>
   <use name="FWCore/ParameterSet"/>
   <use name="DQMServices/Core"/>
   <use name="SimDataFormats/PileupSummaryInfo"/>
   <use name="CommonTools/Utils"/>
+  <use name="DataFormats/PatCandidates"/>
+  <use name="DataFormats/Common"/>
 </library> 
