@@ -3,22 +3,18 @@
 
 #include <string>
 
-#include "../../AnalysisTools/scripts/URStreamer.h"
 
 
+class URStreamer;
 
-// class URStreamer;
-
-class URSelectorOR;
-
-class URSelectorBase
+class URSelector
 {
   public:
-    URSelectorBase(){text_="";};
-    URSelectorBase(std::string text) {text_ = text;};
-    URSelectorBase* operator||(URSelectorBase* other);
-    URSelectorBase* operator&&(URSelectorBase* other);
-    virtual bool select(URStreamer* event) = 0;
+    URSelector(){text_="";};
+    URSelector(std::string text) {text_ = text;};
+    URSelector& operator||(URSelector& other);
+    URSelector& operator&&(URSelector& other);
+    virtual bool select(URStreamer* event) {std::cout << "W A R N I N G ! URSelector::select(...): Base class select method called!\n"; return false;};
     
   private:
     std::string text_;
@@ -26,68 +22,44 @@ class URSelectorBase
 
 
 
-class URSelectorOR: public URSelectorBase
+class URSelectorOR: public URSelector
 {
   public:
-    URSelectorOR(URSelectorBase* first, URSelectorBase* second): first_(first), second_(second) {};
+    URSelectorOR(URSelector& first, URSelector& second): first_(&first), second_(&second) {};
     virtual bool select(URStreamer* event){return (first_->select(event))||(second_->select(event));};
 
   private:
-    URSelectorBase* first_;
-    URSelectorBase* second_;
+    URSelector* first_;
+    URSelector* second_;
 };
 
 
 
-class URSelectorAND: public URSelectorBase
+class URSelectorAND: public URSelector
 {
   public:
-    URSelectorAND(URSelectorBase* first, URSelectorBase* second): first_(first), second_(second) {};
+    URSelectorAND(URSelector& first, URSelector& second): first_(&first), second_(&second) {};
     virtual bool select(URStreamer* event){return (first_->select(event))&&(second_->select(event));};
 
   private:
-    URSelectorBase* first_;
-    URSelectorBase* second_;
+    URSelector* first_;
+    URSelector* second_;
 };
 
 
 
-URSelectorBase* URSelectorBase::operator||(URSelectorBase* other)
+URSelector& URSelector::operator||(URSelector& other)
 {
-  URSelectorOR* result = new URSelectorOR(this,other);
-  return result;
+  URSelectorOR* result = new URSelectorOR(*this,other);
+  return *result;
 }
 
 
-URSelectorBase* URSelectorBase::operator&&(URSelectorBase* other)
+URSelector& URSelector::operator&&(URSelector& other)
 {
-  URSelectorAND* result = new URSelectorAND(this,other);
-  return result;
+  URSelectorAND* result = new URSelectorAND(*this,other);
+  return *result;
 }
-
-
-class URMuonsSelector: public URSelectorBase
-{
-  public:
-    virtual bool select(URStreamer* event) {if(event->muons().size() > 1) return true; return false;};
-};
-
-
-
-class URElectronsSelector: public URSelectorBase
-{
-  public:
-    virtual bool select(URStreamer* event) {if(event->electrons().size() > 1) return true; return false;};
-};
-
-
-
-class URJetsSelector: public URSelectorBase
-{
-  public:
-    virtual bool select(URStreamer* event) {if(event->jets().size() > 4) return true; return false;};
-};
-
 
 
 #endif // URSelector_h

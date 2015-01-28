@@ -36,12 +36,22 @@ void URAnalysisTest::analyze()
   // Book histograms here
 
   
-  URMuonsSelector* muonSelector = new URMuonsSelector;
-  URElectronsSelector* electronSelector = new URElectronsSelector;
-  URJetsSelector* jetsSelector = new URJetsSelector;
-  URSelectorBase* muOrEleSelector = (*muonSelector)||electronSelector; 
-  URSelectorBase* muAndEleSelector = (*muonSelector)&&electronSelector;
-  URSelectorBase* complexSelector = (*muOrEleSelector)&&jetsSelector;
+//   URMuonsSelector* muonSelector = new URMuonsSelector;
+//   URElectronsSelector* electronSelector = new URElectronsSelector;
+//   URJetsSelector* jetsSelector = new URJetsSelector;
+//   URSelectorBase* muOrEleSelector = (*muonSelector)||electronSelector; 
+//   URSelectorBase* muAndEleSelector = (*muonSelector)&&electronSelector;
+//   URSelectorBase* complexSelector = (*muOrEleSelector)&&jetsSelector;
+  
+  
+  URMuonsSelector muonSelector;
+  URElectronsSelector electronSelector;
+  URJetsSelector jetsSelector;
+  URSelector& muOrEleSelector = muonSelector||electronSelector; 
+  URSelector& muAndEleSelector = muonSelector&&electronSelector;
+  URSelector& complexSelector = muOrEleSelector&&jetsSelector;
+  
+  URSelector& complexSelector2 = (muonSelector||electronSelector)&&jetsSelector;
   
   while(event->next())
   {
@@ -52,15 +62,16 @@ void URAnalysisTest::analyze()
       std::cout << "muon pt = " << muon_pt << std::endl;
       bool isGlobal = muon->isGlobal();
       std::cout << "Muon is global = " << isGlobal << std::endl;
-      bool isMuSelected = muonSelector->select(event);
-      bool isEleSelected = electronSelector->select(event);
-      bool isJetsSelected = jetsSelector->select(event);
-      bool isMuOrEleSelected = muOrEleSelector->select(event);
-      bool isMuAndEleSelected = muAndEleSelector->select(event);
-      bool isComplexSelected = complexSelector->select(event);
+      bool isMuSelected = muonSelector.select(event);
+      bool isEleSelected = electronSelector.select(event);
+      bool isJetsSelected = jetsSelector.select(event);
+      bool isMuOrEleSelected = muOrEleSelector.select(event);
+      bool isMuAndEleSelected = muAndEleSelector.select(event);
+      bool isComplexSelected = complexSelector.select(event);
+      bool isComplex2Selected = complexSelector2.select(event);
       
       std::cout << "isMuSelected = " << isMuSelected << ", isEleSelected = " << isEleSelected << ", isJetsSelected = " << isJetsSelected << std::endl;
-      std::cout << "isMuOrEleSelected = " << isMuOrEleSelected << ", isMuAndEleSelected = " << isMuAndEleSelected << ", isComplexSelected = " << isComplexSelected << std::endl;
+      std::cout << "isMuOrEleSelected = " << isMuOrEleSelected << ", isMuAndEleSelected = " << isMuAndEleSelected << ", isComplexSelected = " << isComplexSelected << ", isComplex2Selected = " << isComplex2Selected << std::endl;
     }
     
   }
