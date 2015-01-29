@@ -174,7 +174,10 @@ class ObjStruct(object):
          self.var = branch.var.split('_')[1] #remove '_'
          self.var += '_'
          #remove the vector<> if any FIXME for v< v<int> >
-         self.type= branch.type.split('<')[1].strip('>')
+         try:
+            self.type= branch.type.split('<')[1].strip('>')
+         except Exception as e:
+            raise ValueError("Problem parsing branch: %s with type: %s" % (branch.var, branch.type))
 
       def cpp_var(self):
          'C++ variable'
