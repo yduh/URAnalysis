@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include "URParser.h"
+#include "Logger.h"
 
 opts::options_description & URParser::optionGroup(std::string groupName, std::string desc, Visibility vis)
 {
@@ -23,16 +24,17 @@ void URParser::help()
 {
   for(auto it = opts_.begin(); it != opts_.end(); ++it)
   {
-    std::cout << it->second.help << std::endl
+    //use fatal as we always want it to be displayed
+    Logger::log().fatal() << it->second.help << std::endl
 	      << "Available: ";
 
     switch(it->second.visibility)
     {
-    case ALL: std::cout << "everywhere" << std::endl; break;
-    case CLI: std::cout << "Command line only" << std::endl; break;
-    case CFG: std::cout << "Configuration file only" << std::endl; break;
+    case ALL: Logger::log().fatal() << "everywhere" << std::endl; break;
+    case CLI: Logger::log().fatal() << "Command line only" << std::endl; break;
+    case CFG: Logger::log().fatal() << "Configuration file only" << std::endl; break;
     }
-    std::cout << it->second.value << std::endl;
+    Logger::log().fatal() << it->second.value << std::endl;
   }
 }
 
@@ -61,7 +63,7 @@ void URParser::parseArguments()
     std::ifstream ifs(config_file.c_str());
     if(!ifs)
     {
-      std::cout << "can not open config file: " << config_file << std::endl;
+      Logger::log().fatal() << "can not open config file: " << config_file << std::endl;
       throw 42;
     }
     else

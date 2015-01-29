@@ -1,58 +1,49 @@
 #ifndef AnalyzerBase_h
 #define AnalyzerBase_h
 
-#include "AnalyzerBase.C"
-#include "../../AnalysisTools/scripts/URStreamer.h"
+//#include "AnalyzerBase.C"
+//FIXME: this should NOT be here
+//#include "../../AnalysisTools/scripts/URStreamer.h"
 // #include "../../AnalysisTools/scripts/Dict.cxx"
 //#include "HistoPlotter.C"
 
+//class URSelector;
 
-
-class URSelector;
+#include <string>
+#include "TFile.h"
+#include "TTree.h"
 
 class AnalyzerBase
 {
-  public:
-//     AnalyzerBase() 
-//     {
-//       std::cout << "AnalyzerBase: Please call constructor with arguments!\n";
-//     };
-    AnalyzerBase(const std::string myName_, const std::string sampleName_, const std::string text_, const int maxEvents_ = -1, TTree* tree=0) : 
-    event(new URStreamer(tree)) 
-    {
-      Initialize(myName_, sampleName_, text_, maxEvents_);
-      InitSelector();
-    };
-    ~AnalyzerBase();
+public:
+  AnalyzerBase(const std::string myName, const std::string output_name):
+    myName_(myName),
+    outFile_(output_name.c_str(), "recreate"),
+    tree_(0)
+  {};
+  ~AnalyzerBase();
      
-    // To be run inside the thread
-    virtual void analyze() = 0; 
-    virtual void begin() = 0;
-    virtual void end() = 0;
+  // To be run inside the thread
+  virtual void analyze() = 0; 
+  virtual void begin() = 0;
+  virtual void end() {outFile_.Write();}
     
-    // To be run at the end
-    virtual void postProcess() = 0;
-    
-    void setTree(TTree* tree);
-    
-    // FIXME: this should NOT be called inside a thread... how to do so?
-//     static virtual void setOptions();
+  // To be run at the end
+  virtual void postProcess() {}
 
-//     friend class URSelector;
+  //must implement also this
+  //static void setOptions()
 
-  private:
-    void InitSelector();
-    void Initialize(const std::string myName_, const std::string sampleName_, const std::string text_, const int maxEvents_);
-    std::string myName;
+  void setTree(TTree* tree){tree_=tree;}
     
-  protected:
-    URStreamer* event;
+private:
+  std::string myName_;
+    
+protected:
+  //URStreamer* event;
 //     URSelector* s;
-    std::string sampleName;
-    int maxEvents;
-    std::string text;
-    TFile* outFile;
-    TTree* tree;
+  TFile outFile_;
+  TTree* tree_;
 };
 
 #endif // AnalyzerBase_h
