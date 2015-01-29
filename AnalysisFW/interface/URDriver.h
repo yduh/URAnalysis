@@ -20,6 +20,7 @@ Class to handle the analysis of Ntuples in a threaded way
 #include "TTree.h"
 #include "Logger.h"
 #include <sstream>
+#include "TThread.h"
 
 template<typename T>
 class AnalysisWorker: public Worker{
@@ -103,7 +104,7 @@ public:
     if(values.count("verbose"))
     {
       Logger::log().warning() << "Setting the log level to DEBUG. " <<
-	"Brace yourselves, lots of printout is coming!" << std::endl;
+	"Brace yourselves, printout madness is coming!" << std::endl;
       Logger::log().setLevel(Logger::Level::DEBUG);
     }
 
@@ -118,6 +119,11 @@ public:
     reader_.fill(input_files, file_list);
     const int n_threads = values["threads"].as<int>();
     Logger::log().debug() << "Running with " << n_threads << " threads"<< std::endl;
+
+    //create (but do NOT use) a TThread, to trigger the spotless and 
+    //clean ROOT implementation to consider thread safety a priority
+    //and protect the global variables (!)
+    TThread dummy;
 
     //create threads with unique names
     AnalysisWorker<T> *workers[n_threads];
@@ -158,14 +164,14 @@ public:
       throw 42;
     }
     
-    for(auto& file : outputs) 
-    {
-      if(!remove(file.c_str()))
-      {
-	Logger::log().fatal() <<"Error removing file: " << file << std::endl;
-	throw 42;
-      }
-    }
+    // for(auto& file : outputs) 
+    // {
+    //   if(!remove(file.c_str()))
+    //   {
+    // 	Logger::log().fatal() <<"Error removing file: " << file << std::endl;
+    // 	throw 42;
+    //   }
+    // }
     return 0;
   }
 private:
