@@ -20,31 +20,27 @@ public:
 
   bool empty()
   {
-    mutex_.lock();
+    std::lock_guard<std::mutex> lock(mutex_);
     bool val = queue_.empty();
-    mutex_.unlock();
     return val;
   }
   size_t size()
   {
-    mutex_.lock();
+    std::lock_guard<std::mutex> lock(mutex_);
     size_t val = queue_.size();
-    mutex_.unlock();
     return val;
   }
   T pop()
   {
-    mutex_.lock();
+    std::lock_guard<std::mutex> lock(mutex_);
     T val = queue_.front();
     queue_.pop();
-    mutex_.unlock();
     return val;
   }
   void push(T &val)
   {
-    mutex_.lock();
+    std::lock_guard<std::mutex> lock(mutex_);
     queue_.push(val);
-    mutex_.unlock();
   }
 
 private:
