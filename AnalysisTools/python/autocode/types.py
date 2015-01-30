@@ -5,6 +5,8 @@ from URAnalysis.AnalysisTools.autocode.cppformat import cpp_format
 from pdb import set_trace
 import os
 
+_separator='.'
+_data_member_postfix='_'
 _templates_dir = os.path.join(
    os.environ['CMSSW_BASE'],
    'src/URAnalysis/AnalysisTools/python/autocode/templates'
@@ -37,11 +39,13 @@ class BranchMeta(object):
       }
    def __init__(self, branch):
       self.name = branch.GetName()
-      self.is_object = '_' in self.name
+      self.is_object = _separator in self.name
       self.var_public = not self.is_object
-      self.var = self.name.split('/')[0]
+      self.var = (self.name.split('/')[0]).replace(_separator, _data_member_postfix)
+      self.attr = self.var
       if self.is_object:
-         self.var += '_'
+         self.var += _data_member_postfix
+         self.attr = self.name.split('/')[0].split(_separator)[1]
       if hasattr(branch, 'GetTypeName'):
          self.type = branch.GetTypeName()
          self.is_vector = True
@@ -76,6 +80,7 @@ class ObjectMeta(object):
    that start with the same pattern <object name>_'''
    cpp_template = get_template('loadObject')
    vgetter_template = get_template('getVObj')
+   getter_template = get_template('getObj')
    
    def __init__(self, prefix, branches):
       self.var_public = False
@@ -106,6 +111,7 @@ class ObjectMeta(object):
       'C++ clear object'
       if self.is_vector:
          return '%s.clear();' % self.obj_container
+      else: return ""
 
    def cpp_load(self, tname='tree_'):
       '''C++ activate and set branch
@@ -129,7 +135,22 @@ class ObjectMeta(object):
          return self._vobj_getter()
       else:
          return self._single_getter()
-   
+
+   def _single_getter(self):
+      return ''
+      set_trace()
+      dump = '\n'.join(
+         'obj.set%s(%s);' % (i.attr,i.var) for i in self.branches
+         )
+      
+      val = cpp_format(
+         ObjectMeta.getter_template,
+         RET_TYPE = self.as_struct.name,
+         NAME = self.prefix,
+         )
+      set_trace()
+      
+
    def _vobj_getter(self):
       #make iterators
       #self.as_struct.name
@@ -148,7 +169,7 @@ class ObjectMeta(object):
          '++it_%s;' % i.var for i in self.branches
          )
       it_dump = '\n'.join(
-         'obj.set%s(*it_%s);' % (i.var.split('_')[1],i.var) for i in self.branches
+         'obj.set%s(*it_%s);' % (i.attr,i.var) for i in self.branches
          )
       return cpp_format(
          ObjectMeta.vgetter_template,
@@ -171,13 +192,19 @@ class ObjStruct(object):
          #FIXME this class should be made more 
          #resilient against strange naming/variable
          #behaviors!
-         self.var = branch.var.split('_')[1] #remove '_'
-         self.var += '_'
+         self.var = branch.attr + '_'
+         #self.var += '_'
          #remove the vector<> if any FIXME for v< v<int> >
-         try:
-            self.type= branch.type.split('<')[1].strip('>')
-         except Exception as e:
-            raise ValueError("Problem parsing branch: %s with type: %s" % (branch.var, branch.type))
+         if branch.is_vector:
+            #remove the first vector<> enclosure
+            #vectors of vectors SHOULD be fine
+            self.type = branch.type[branch.type.find('<')+1:branch.type.rfind('>')].strip()
+         else:
+            #non vectors have the same type
+            self.type = branch.type
+         # except Exception as e:
+         #    set_trace()
+         #    raise ValueError("Problem parsing branch: %s with type: %s" % (branch.var, branch.type))
 
       def cpp_var(self):
          'C++ variable'
@@ -219,9 +246,9 @@ class ObjStruct(object):
       inputs = ','.join(
          i.cpp_input() for i in self.members
          )
-      init = ',\n//'.join(
-         i.cpp_init() for i in self.members
-         )
+      init = ''#',\n'.join(
+      ##    i.cpp_init() for i in self.members
+      ##    )
       void_init = ',\n'.join(
          i.cpp_void_init() for i in self.members
          )

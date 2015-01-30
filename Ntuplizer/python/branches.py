@@ -43,7 +43,7 @@ kinematics = [
 
 trigger = [
    make_branch_pset(
-      i.replace('_',''), 
+      i,#.replace('_',''), 
       'matching_path("HLT_%s_v*").accept' % i,
       '/O'
       )
@@ -85,7 +85,7 @@ muon_specific = [
 ]
 muon_specific.extend(
    make_branch_pset(
-      i.replace('_',''),
+      i,#.replace('_',''),
       'userInt("%s")' % i, '/O') for i in paths_mu
 )
 #muon_specific.append(
@@ -183,7 +183,7 @@ electron_specific = [
 ]
 electron_specific.extend(
    make_branch_pset(
-      i.replace('_',''),
+      i,#.replace('_',''),
       'userInt("%s")' % i, '/O') for i in paths_el
 )
 
