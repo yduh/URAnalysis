@@ -181,11 +181,12 @@ def make_ntuple(
      )
      ntuple += process.genParticles
 
-     #genPInheritance = cms.EDAnalyzer(
-     #   'NTupleGenPaticleInheritance'
-     #   label = cms.string('genParticles'),
-     #   src = cms.InputTag('prunedGenParticles'),
-     #)
+     process.genPInheritance = cms.EDAnalyzer(
+        'NtupleGenParticleInheritance',
+        label = cms.string('genParticles'),
+        src = cms.InputTag('prunedGenParticles'),
+     )
+     ntuple += process.genPInheritance
 
    process.ntupleEnd = cms.EDAnalyzer('TreeFiller')
    return ntuple, process.ntupleEnd
