@@ -13,6 +13,7 @@ import URAnalysis.AnalysisTools.autocode.types as cpp_types
 parser = ArgumentParser(__doc__)
 parser.add_argument('tfile_name', type=str)
 parser.add_argument('tree_path', type=str)
+parser.add_argument('--nodict', action='store_false')
 
 args = parser.parse_args()
 
@@ -26,7 +27,7 @@ if not tree:
    raise ValueError('%s does not exist!' % args.tree_path)
 
 branches = [cpp_types.BranchMeta(i) for i in tree.GetListOfBranches()]
-objects  = set(i.name.split('_')[0] for i in branches if i.is_object)
+objects  = set(i.name.split(cpp_types._separator)[0] for i in branches if i.is_object)
 objects  = [cpp_types.ObjectMeta(
       i, 
       [j for j in branches if j.name.startswith(i)]
@@ -37,12 +38,13 @@ streamer = cpp_types.StreamerMeta(branches, objects)
 with open('URStreamer.h', 'w') as output:
    output.write(streamer.cpp_dump())
 
-## NOT NEEDED AS THE CODE IS IN C++
-ldef = cpp_types.LinkDefMeta(objects)
-with open('LinkDef.h', 'w') as output:
-   output.write(ldef.cpp_dump())
+if args.nodict:
+   ## NOT NEEDED AS THE CODE IS IN C++
+   ldef = cpp_types.LinkDefMeta(objects)
+   with open('LinkDef.h', 'w') as output:
+      output.write(ldef.cpp_dump())
 
-#Compile macro
-#ROOT.gROOT.ProcessLine('.L URStreamer.C+')
-os.system('rootcint -f Dict.cxx -c ./URStreamer.h LinkDef.h')
-os.system('g++ -Wall -shared -fPIC -o Dict.so Dict.cxx `root-config --cflags --glibs`')
+   #Compile macro
+   #ROOT.gROOT.ProcessLine('.L URStreamer.C+')
+   os.system('rootcint -f Dict.cxx -c ./URStreamer.h LinkDef.h')
+   os.system('g++ -Wall -shared -fPIC -o Dict.so Dict.cxx `root-config --cflags --glibs`')

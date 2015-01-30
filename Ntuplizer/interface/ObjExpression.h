@@ -1,5 +1,6 @@
 #ifndef ObjExpression_H
 #define ObjExpression_H
+#define SEPARATOR "."
 
 /*
 class: ObjExpression<EDObject>
@@ -57,7 +58,7 @@ struct BranchInfo{
     ULONG,
     BOOL    };
   BranchInfo(std::string& prefix, const edm::ParameterSet &tag):
-    name(prefix+"_"+tag.getParameter<std::string>("name")),
+    name(prefix+SEPARATOR+tag.getParameter<std::string>("name")),
     expr(tag.getParameter<std::string>("expr")),
     str_type(tag.getParameter<std::string>("type"))
   {
@@ -74,7 +75,6 @@ struct BranchInfo{
     else if(str_type == "/O") type = BOOL  ;
     else type = FLOAT;
   }
-
   std::string name, expr, str_type;
   typeID type;
 };
