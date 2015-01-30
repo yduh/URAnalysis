@@ -1,0 +1,10 @@
+const {RET_TYPE}& {NAME}(){
+  //non-vectorial objects are recomputed every
+  //time for simplicity 
+  load{RET_TYPE}();
+
+  {RET_TYPE} obj;
+  {BRANCH_DUMP}
+
+  return obj;
+}
