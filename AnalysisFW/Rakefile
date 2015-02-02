@@ -1,0 +1,14 @@
+desc "Compile the object files of the different classes created in AnalysisFW"
+
+#for each file make a .o
+task :build => [] do |t|
+  #list all the .cc .C and .cxx files to be compiled
+  to_be_compiled = Dir.glob('src/*').select{|x| %r{src/(.*).(cc|C|cxx)$}.match(x)}
+
+  to_be_compiled.each do |source|
+    target = source.sub('src','lib').sub(%r{lib/(.*).(cc|C|cxx)},"lib/\\1.o")
+    sh "g++ -Iinterface/ `root-config --cflags` -Wall -c #{source} -o #{target}"
+  end
+end
+
+
