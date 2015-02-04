@@ -20,12 +20,21 @@ process.TFileService = cms.Service(
         fileName = cms.string("test_ntuple.root")
 )
 
+# To print out the MC generator info for the first event:
+process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+process.printTree = cms.EDAnalyzer("ParticleListDrawer",
+  maxEventsToPrint = cms.untracked.int32(1),
+  printVertex = cms.untracked.bool(False),
+  src = cms.InputTag("prunedGenParticles")
+)
+
 import URAnalysis.Ntuplizer.ntuplizer as ntuplizer
 ntuple_seq, ntuple_end = ntuplizer.make_ntuple(
    process,
    True
    )
-
+   
+# If you want to add you own analyzer, just add it like: ntuple_seq+process.printTree
 process.p = cms.Path(ntuple_seq)
 process.end = cms.EndPath(
    ntuple_end

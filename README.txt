@@ -41,3 +41,14 @@ source environment.sh
 
 And you are set to go!
 
+   Run test Ntuplizer
+====================
+To run the test NTuple:
+cmsRun Ntuplizer/test/test_ntuplizer.py
+runs over 200 events of TTBar RelVal at CERN, no skimming applied
+
+The NTuple content is defined here: Ntuplizer/python/ntuplizer_cfi.py
+you can add new collection dumpers (GenParticles, Photons, Taus, MET
+(yes, met is stored in a vector so even MET) ) here: Ntuplizer/interface/ConverterFactory.h
+and remember to recompile and add the proper includes!
+

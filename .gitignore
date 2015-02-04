@@ -5,3 +5,6 @@ __init__.py
 external/virtualenv
 *.root
 .\#*
+*.o
+*.tar
+.lib_timestamp

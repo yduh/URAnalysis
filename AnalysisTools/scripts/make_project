@@ -1,0 +1,12 @@
+#! /bin/env bash
+
+set -o errexit
+
+if [ -z $1 ] || [ $1 == '-h' ] || [ $1 == '--help' ] 
+then
+    echo "Usage: make_project ProjectName --> crate a URAnalysis project"
+    exit
+fi
+
+tar -xf $URA/AnalysisTools/templates/Project_template.tar.gz -C /tmp/
+mv /tmp/Project ./$1

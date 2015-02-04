@@ -1,0 +1,12 @@
+#! /bin/env bash
+
+set -o errexit
+
+if [ -z $1 ] || [ $1 == '-h' ] || [ $1 == '--help' ] 
+then
+    echo "Usage: make_analyzer AnalyzerName --> crate a URAnalysis analyzer"
+    exit
+fi
+
+cp $URA/AnalysisTools/templates/analyzer.template $1.cc
+sed -i "s|CLASSNAME|$1|g" $1.cc

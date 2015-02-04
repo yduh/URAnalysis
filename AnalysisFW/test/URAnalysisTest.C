@@ -8,8 +8,6 @@
 #include "URAnalysisTest.h"
 // #include "../utilities/constants.h"
 
-
-
 void URAnalysisTest::begin()
 {}
 
@@ -27,15 +25,6 @@ void URAnalysisTest::postProcess()
 
 void URAnalysisTest::analyze()
 {
-//   if (fChain == 0) return;
-
-//   Long64_t nentries = (maxEvents == -1) ? fChain->GetEntries() : std::min((int)fChain->GetEntries(), maxEvents);
-
-//   std::cout << "Analyzing " << nentries << " events.\n";
-
-  // Book histograms here
-
-  
 //   URMuonsSelector* muonSelector = new URMuonsSelector;
 //   URElectronsSelector* electronSelector = new URElectronsSelector;
 //   URJetsSelector* jetsSelector = new URJetsSelector;
@@ -53,6 +42,7 @@ void URAnalysisTest::analyze()
   
   URSelector& complexSelector2 = (muonSelector||electronSelector)&&jetsSelector;
   
+
   while(event->next())
   {
     const vector<Muon>& Muons = event->muons();

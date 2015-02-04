@@ -1,0 +1,7 @@
+$fwk_dir = ENV['URA']+'/AnalysisFW'
+tools = $fwk_dir+'/rake/tools.rb'
+require tools
+
+desc "Compile the object files of the different classes created in AnalysisFW"
+task :build => make_libs($fwk_dir)
+
