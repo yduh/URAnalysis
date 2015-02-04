@@ -31,7 +31,7 @@
 #include "DataFormats/Candidate/interface/CandidateFwd.h"
 #include "DataFormats/Common/interface/Ref.h"
 #include "URAnalysis/Ntuplizer/interface/Obj2BranchBase.h"
-
+#include "URAnalysis/Ntuplizer/interface/ObjExpression.h" //defines the separator
 
 class NtupleGenParticleInheritance : public Obj2BranchBase{
 public:
@@ -67,10 +67,10 @@ NtupleGenParticleInheritance::NtupleGenParticleInheritance(edm::ParameterSet iCo
 {
   // By having this class inherit from Obj2BranchBAse, we have access to our tree_, no need for TFileService
   // Book branches:
-  tree_.branch("genParticles_idx", &index);
-  tree_.branch("genParticles_momIdx", &mom_index); 
-  tree_.branch("genParticles_nDaught", &num_daughters);           // we don't really need these two branches
-  tree_.branch("genParticles_1DaughtIdx", &first_daughter_index); // since all the info is available for the mothers
+  tree_.branch(prefix_+SEPARATOR+"idx", &index);
+  tree_.branch(prefix_+SEPARATOR+"momIdx", &mom_index); 
+  tree_.branch(prefix_+SEPARATOR+"nDaught", &num_daughters);           // we don't really need these two branches
+  tree_.branch(prefix_+SEPARATOR+"firstDaughtIdx", &first_daughter_index); // since all the info is available for the mothers
   
 }
 
