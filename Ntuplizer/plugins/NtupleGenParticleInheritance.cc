@@ -71,7 +71,6 @@ NtupleGenParticleInheritance::NtupleGenParticleInheritance(edm::ParameterSet iCo
   tree_.branch(prefix_+SEPARATOR+"momIdx", &mom_index); 
   tree_.branch(prefix_+SEPARATOR+"nDaught", &num_daughters);           // we don't really need these two branches
   tree_.branch(prefix_+SEPARATOR+"firstDaughtIdx", &first_daughter_index); // since all the info is available for the mothers
-  
 }
 
 // Destructor
