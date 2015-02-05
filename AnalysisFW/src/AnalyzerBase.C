@@ -3,8 +3,8 @@
 
 #include <typeinfo>
 
-
 #include "AnalyzerBase.h"
+
 
 
 AnalyzerBase::~AnalyzerBase()

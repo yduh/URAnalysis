@@ -22,15 +22,16 @@ public:
   opts::options_description & optionGroup(std::string groupName, std::string desc="", Visibility vis=ALL);
   opts::positional_options_description & args(){return args_;}
   opts::variables_map & values() {return vmap_;}
+  opts::basic_parsed_options<char> cfg_options() {return cfg_options_;};
 
-  void setArgs(int argc, char** argv){argc_=argc; argv_=argv;}
+  void setArgs(const int argc, const char** argv){argc_=argc; argv_=const_cast<char**>(argv);}
 
   // This must be a singleton
   static URParser& instance() {
     static URParser val;
     return val; 
   }
-  static URParser& instance(int argc, char** argv) {
+  static URParser& instance(const int argc, const char** argv) {
     URParser &val = URParser::instance();
     val.setArgs(argc, argv);
     return val;
@@ -42,7 +43,7 @@ private:
     args_(),
     argc_(0),
     argv_(0),
-    parsed_(false)
+    cfg_options_(0)
   {
     opts::options_description &generic = optionGroup("generic", "general-purpose command-line-only options", CLI);
     generic.add_options()
@@ -71,12 +72,13 @@ private:
   std::map<std::string, OptionGroup> opts_;
     
   //positional args
-  opts::positional_options_description args_;    
+  opts::positional_options_description args_; 
+  
   opts::variables_map vmap_;
+  opts::basic_parsed_options<char> cfg_options_;
 
   int argc_;
   char** argv_;
-  bool parsed_;
 };
 
 #endif

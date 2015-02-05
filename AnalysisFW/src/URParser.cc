@@ -24,7 +24,6 @@ void URParser::help()
 {
   for(auto it = opts_.begin(); it != opts_.end(); ++it)
   {
-    //use fatal as we always want it to be displayed
     Logger::log().fatal() << it->second.help << std::endl
 	      << "Available: ";
 
@@ -40,9 +39,6 @@ void URParser::help()
 
 void URParser::parseArguments()
 {
-  //avoid repeating parsing, it's dangerous!
-  if(parsed_) return;
-  parsed_ = true;
   opts::options_description cli_opts;
   for(auto it = opts_.begin(); it != opts_.end(); ++it)
     if(it->second.visibility == ALL || it->second.visibility == CLI)
@@ -56,7 +52,7 @@ void URParser::parseArguments()
     help();
     std::exit(0);
   }
-
+  
   if(vmap_.count("config"))
   {
     std::string config_file = vmap_["config"].as<std::string>();
@@ -73,7 +69,10 @@ void URParser::parseArguments()
 	if(it->second.visibility == ALL || it->second.visibility == CFG)
 	  cfg_opts.add(it->second.value);
 
-      store(parse_config_file(ifs, cfg_opts), vmap_);
+      cfg_options_ = parse_config_file(ifs, cfg_opts, true);
+      Logger::log().debug() << "URParser::parseArguments() : cfg_options_.options.size() = " << cfg_options_.options.size() << std::endl;
+      store(cfg_options_, vmap_);
+      Logger::log().debug() << "URParser::parseArguments() : vmap_.size() = " << vmap_.size() << std::endl;
       notify(vmap_);
     }
   }
