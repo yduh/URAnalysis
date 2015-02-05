@@ -2,20 +2,26 @@
 #define URSelector_h
 
 #include <string>
+#include <iostream>
+
+#include "URParser.h"
+#include "Logger.h"
 
 class URStreamer;
 
 class URSelector
 {
   public:
-    URSelector(){text_="";};
-    URSelector(std::string text) {text_ = text;};
+    URSelector(){text_=""; baseIsConfigured = false;};
+    URSelector(std::string text) {text_ = text; baseIsConfigured = false;};
     URSelector& operator||(URSelector& other);
     URSelector& operator&&(URSelector& other);
-    virtual bool select(URStreamer* event) {std::cout << "W A R N I N G ! URSelector::select(...): Base class select method called!\n"; return false;};
+    virtual bool select(URStreamer* event) {Logger::log().warning() << "W A R N I N G ! URSelector::select(...): Base class select method called!\n"; return false;};
+    virtual void getConfiguration();
     
   private:
     std::string text_;
+    bool baseIsConfigured;
 };
 
 
@@ -44,20 +50,6 @@ class URSelectorAND: public URSelector
     URSelector* second_;
 };
 
-
-
-URSelector& URSelector::operator||(URSelector& other)
-{
-  URSelectorOR* result = new URSelectorOR(*this,other);
-  return *result;
-}
-
-
-URSelector& URSelector::operator&&(URSelector& other)
-{
-  URSelectorAND* result = new URSelectorAND(*this,other);
-  return *result;
-}
 
 
 #endif // URSelector_h

@@ -6,17 +6,22 @@
 
 #include "./URAnalysisTest.C"
 #include "../src/FileOpener.C"
+#include "../src/URParser.cc"
 
 
 int main(int argc, char *argv[])
-{
+{ 
+  URParser& parser = URParser::instance(argc, (const char**)argv);
+  parser.parseArguments();
+  
+  
   FileOpener f;
   TChain* tree = new TChain("Events");
   TChain* metadata = new TChain("metadata");
   tree = f.OpenFile("test", tree, metadata);
   URAnalysisTest* a = new URAnalysisTest("test", "test2", -1, tree);
   a->analyze();
-  return 0;
+  return 0; 
   
   
 //   if(argc == 2)

@@ -1,4 +1,4 @@
-all:streamer main
+all:streamer TestFWK
 
 streamer:streamergen dict
 
@@ -9,4 +9,7 @@ dict:
 	g++ `root-config --cflags` -Wall -c Dict.cxx -o URStreamerDict.o
 
 main:
-	g++ -I../interface/ -I../src/ `root-config --cflags` `root-config --libs` URStreamerDict.o MainURAnalysisTest.cc -o MainURAnalysisTest
+	g++ -I../interface/ -I../src/ `root-config --cflags` `root-config --libs` -lboost_program_options URStreamerDict.o MainURAnalysisTest.cc -o MainURAnalysisTest
+
+TestFWK:
+	g++ -I../interface/ -I../src/ `root-config --cflags` `root-config --libs` -lboost_program_options URStreamerDict.o ../../AnalysisFW/interface/URDriver.h ../../AnalysisFW/src/URParser.cc ../../AnalysisFW/src/AnalyzerBase.C ../../AnalysisFW/src/URStandardSelectors.cc ../../AnalysisFW/src/URSelector.cc TestFWK.cc -o TestFWK
