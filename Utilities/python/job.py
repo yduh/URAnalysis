@@ -25,7 +25,7 @@ class Job(object):
       config.section_("JobType")
       config.JobType.psetName = self.pycfg
       config.JobType.pluginName = 'Analysis'
-      config.JobType.pyCfgParams = self.args
+      config.JobType.pyCfgParams = self.args.split()
       config.section_("Data")
       config.Data.inputDataset = self.dbs_name
       config.Data.splitting = 'LumiBased' if isData else 'FileBased'
@@ -47,3 +47,5 @@ class Job(object):
 
       return crab_cfg_name
 
+   def save_as_crab2(self):
+      pass
