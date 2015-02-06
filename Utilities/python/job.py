@@ -29,6 +29,7 @@ class Job(object):
       config.section_("Data")
       config.Data.inputDataset = self.dbs_name
       config.Data.splitting = 'LumiBased' if isData else 'FileBased'
+      config.Data.unitsPerJob = 5
       config.Data.totalUnits = self.njobs
       if self.mask:
          config.Data.lumimask = self.mask
