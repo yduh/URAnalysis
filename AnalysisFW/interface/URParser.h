@@ -24,14 +24,14 @@ public:
   opts::variables_map & values() {return vmap_;}
   opts::basic_parsed_options<char> cfg_options() {return cfg_options_;};
 
-  void setArgs(const int argc, const char** argv){argc_=argc; argv_=const_cast<char**>(argv);}
+  void setArgs(int argc, char** argv){argc_=argc; argv_=const_cast<char**>(argv);}
 
   // This must be a singleton
   static URParser& instance() {
     static URParser val;
     return val; 
   }
-  static URParser& instance(const int argc, const char** argv) {
+  static URParser& instance(int argc, char** argv) {
     URParser &val = URParser::instance();
     val.setArgs(argc, argv);
     return val;
