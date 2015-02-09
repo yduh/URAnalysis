@@ -44,10 +44,12 @@ class EventTree{
   //everything
 
  private:
-  EventTree(){
+  EventTree()
+  {
     edm::Service<TFileService> fs;
     fs->file().cd();
     tree_ = new TTree("Events", "test");
+    tree_->SetAutoSave(3000000000);
   }
 
   EventTree(EventTree const&);             
