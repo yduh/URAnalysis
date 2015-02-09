@@ -17,3 +17,10 @@ options.register(
    VarParsing.varType.bool,
    'global tag to be used'
 )
+options.register(
+   'reportEvery',
+   100,
+   VarParsing.multiplicity.singleton,
+   VarParsing.varType.int,
+   'Verbosity of message logs'
+)

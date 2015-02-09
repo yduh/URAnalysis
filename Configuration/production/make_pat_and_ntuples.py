@@ -13,6 +13,8 @@ options.parseArguments()
 process = cms.Process("PATPlusNtuple")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = options.reportEvery
+process.MessageLogger.cerr.FwkSummary.reportEvery = options.reportEvery
 
 process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
 process.maxEvents = cms.untracked.PSet( 
