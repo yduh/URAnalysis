@@ -36,7 +36,7 @@ rule ".root" => [
   executable = File.basename(t.prerequisites[0])
   cfg = t.prerequisites[1]
   inputs = t.prerequisites[2]
-  puts "time #{executable} #{inputs} #{t.name} -c  #{cfg} --threads #{workers}"
+  sh "time #{executable} #{inputs} #{t.name} -c  #{cfg} --threads #{workers}"
 end
 
 task :analyze, [:analyzer] do |t, args|
