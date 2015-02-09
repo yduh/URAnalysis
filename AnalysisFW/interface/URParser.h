@@ -41,13 +41,13 @@ private:
   URParser():
     opts_(),
     args_(),
+    cfg_options_(0),
     argc_(0),
-    argv_(0),
-    cfg_options_(0)
+    argv_(0)
   {
     opts::options_description &generic = optionGroup("generic", "general-purpose command-line-only options", CLI);
     generic.add_options()
-      ("help", "produce help message")
+      ("help,h", "produce help message")
       ("config,c", opts::value<std::string>(),"name of a file of a configuration.");
   }
 
