@@ -21,6 +21,7 @@ Class to handle the analysis of Ntuples in a threaded way
 #include "Logger.h"
 #include <sstream>
 #include "TThread.h"
+#include "TROOT.h"
 
 template<typename T>
 class AnalysisWorker: public Worker{
@@ -29,12 +30,13 @@ public:
     Worker(id),
     inputs_(inputs),
     analyzer_(outname)
-  {}
+  {    
+    analyzer_.begin();
+  }
 
 private:
   virtual void work()
   {
-    analyzer_.begin();
     while(!inputs_.empty())
     {
       //get input file name from the queue
