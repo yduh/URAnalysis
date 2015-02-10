@@ -7,6 +7,44 @@
   in a python-like way
  */
 #include <ostream>
+#include <sstream>
+
+class Messenger {
+public:
+  Messenger(bool active):
+    message_(),
+    active_(active) {}
+  //No need to implement those
+  Messenger(Messenger const&);
+  void operator=(Messenger const&);
+
+  ~Messenger()
+  {
+    if(active_) std::cout << message_.str();
+  }
+
+  template<typename T>
+  Messenger& operator<<(T const & t) 
+  {
+    if(active_) message_ << t;
+    return *this;
+  }
+
+  Messenger& operator<<(std::ostream&(*f)(std::ostream&))  
+  { 
+    if(active_) message_ << f; 
+    return *this; 
+  }
+  Messenger& operator<<(std::ios_base&(*f)(std::ios_base&))  
+  { 
+    if(active_) message_ << f; 
+    return *this; 
+  }     
+
+private:
+  std::stringstream message_; 
+  bool active_;
+};
 
 class Logger
 {
@@ -20,23 +58,23 @@ public:
   }
   
   //void dbg(Level lv) {std::cout << "level " << level_ << ", required: " << lv << std::endl;}
-  std::ostream& debug()  {return (level_ <= DEBUG) ? std::cout : null_;}
-  std::ostream& info()   {return (level_ <= INFO) ? std::cout : null_;}
-  std::ostream& warning(){return (level_ <= WARNING) ? std::cout : null_;}
-  std::ostream& error()  {return (level_ <= ERROR) ? std::cout : null_;}
-  std::ostream& fatal()  {return (level_ <= FATAL) ? std::cout : null_;}
+  Messenger debug()  {Messenger m(level_ <= DEBUG)  ; return m;}
+  Messenger info()   {Messenger m(level_ <= INFO)   ; return m;}
+  Messenger warning(){Messenger m(level_ <= WARNING); return m;}
+  Messenger error()  {Messenger m(level_ <= ERROR)  ; return m;}
+  Messenger fatal()  {Messenger m(level_ <= FATAL)  ; return m;}
 
 private:
   Logger():
-    level_(DISABLED),
-    null_(0){}
+    level_(DISABLED)
+  {}
   
   //No need to implement those
   Logger(Logger const&);
   void operator=(Logger const&);
 
   Level level_;
-  std::ostream null_;
+  //std::ostream null_;
 };
 
 #endif
