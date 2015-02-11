@@ -14,6 +14,7 @@ parser = ArgumentParser(__doc__)
 parser.add_argument('tfile_name', type=str)
 parser.add_argument('tree_path', type=str)
 parser.add_argument('--nodict', action='store_false')
+parser.add_argument('--projectdir', type=str, help='project location where to copy files', default='.')
 
 args = parser.parse_args()
 
@@ -48,3 +49,13 @@ if args.nodict:
    #ROOT.gROOT.ProcessLine('.L URStreamer.C+')
    os.system('rootcint -f Dict.cxx -c ./URStreamer.h LinkDef.h')
    os.system('g++ -Wall -shared -fPIC -o Dict.so Dict.cxx `root-config --cflags --glibs`')
+
+
+#copy files
+project_dir = args.projectdir
+os.system('mv URStreamer.h %s/interface/.' % project_dir)
+os.system('mv Dict.h %s/interface/.' % project_dir)
+os.system('mv Dict.so %s/lib/.' % project_dir)
+os.system('rm LinkDef.h')
+os.system('rm Dict.cxx')
+
