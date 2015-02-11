@@ -1,4 +1,4 @@
-#! /bin/env python
+#! /usr/bin/env python
 __doc__='''
 Dumps profile statiscs saved in prf format 
 (as produced by python default profiler)

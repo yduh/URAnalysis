@@ -1,4 +1,4 @@
-#! /bin/env python
+#! /usr/bin/env python
 
 '''
 Two trees are provided in the format file.root:path/to/tree

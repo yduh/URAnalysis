@@ -1,4 +1,4 @@
-#! /bin/env python
+#! /usr/bin/env python
 
 '''
 Threaded script to extract meta data from NTuple root

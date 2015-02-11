@@ -1,4 +1,4 @@
-#! /bin/env python
+#! /usr/bin/env python
 '''
 Like edmDumpEventContent, but for custom trees.
 The --type option prints together with the branch
