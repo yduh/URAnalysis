@@ -1,37 +1,37 @@
 #!/bin/bash 
 
 # Setup the environment for the framework
-
-echo "Setting up CMSSW runtime environment"
-eval `scramv1 runtime -sh`
-
-export URA=$CMSSW_BASE/src/URAnalysis/
+export URA=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo "Setting variable \$URA=$URA"
+export URA_BASE=$(dirname $URA)
 
-export URA_BASE=$CMSSW_BASE/src
+if [ -d "$URA_BASE/../.SCRAM" ]; then
+    echo "Setting up CMSSW runtime environment"
+    eval `scramv1 runtime -sh`
 
-#source site-dependent configuration
-source $URA/Configuration/site/site_configuration.sh
+    #source site-dependent configuration
+    source $URA/Configuration/site/site_configuration.sh
 
-#re-run cmsenv, crab tends to screw up many things
-eval `scramv1 runtime -sh`
+    #re-run cmsenv, crab tends to screw up many things
+    eval `scramv1 runtime -sh`
 
-vpython=$base/URAnalysis/external/virtualenv
-echo "Activating python virtualenv from $vpython"
+    vpython=$base/URAnalysis/external/virtualenv
+    echo "Activating python virtualenv from $vpython"
 
-if [ -d "$vpython" ]; then
-  echo "Activating python virtual environment"
-  export VIRTUAL_ENV_DISABLE_PROMPT=1
-  pushd $vpython
-  # See https://github.com/pypa/virtualenv/issues/150
-  source bin/activate
-  popd
+    if [ -d "$vpython" ]; then
+      echo "Activating python virtual environment"
+      export VIRTUAL_ENV_DISABLE_PROMPT=1
+      pushd $vpython
+      # See https://github.com/pypa/virtualenv/issues/150
+      source bin/activate
+      popd
+    fi
+
+    # Put the PWD into the PYTHONPATH
+    export PYTHONPATH=.:$PYTHONPATH
+    # Make sure we prefer our virtualenv packages
+    export PYTHONPATH=$vpython/lib/python2.7/site-packages/:$PYTHONPATH
 fi
-
-# Put the PWD into the PYTHONPATH
-export PYTHONPATH=.:$PYTHONPATH
-# Make sure we prefer our virtualenv packages
-export PYTHONPATH=$vpython/lib/python2.7/site-packages/:$PYTHONPATH
 
 # Don't require a scram build to get updated scripts
 export PATH=$URA/Utilities/scripts:$PATH
