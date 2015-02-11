@@ -28,9 +28,12 @@ if [ -d "$URA_BASE/../.SCRAM" ]; then
     fi
 
     # Put the PWD into the PYTHONPATH
-    export PYTHONPATH=.:$PYTHONPATH
     # Make sure we prefer our virtualenv packages
     export PYTHONPATH=$vpython/lib/python2.7/site-packages/:$PYTHONPATH
+else
+    echo "exposing python"
+    export PYTHONPATH=$URA/external:$PYTHONPATH
+    install/expose_python.py
 fi
 
 # Don't require a scram build to get updated scripts
