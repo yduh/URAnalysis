@@ -54,8 +54,9 @@ if args.nodict:
 #copy files
 project_dir = args.projectdir
 os.system('mv URStreamer.h %s/interface/.' % project_dir)
-os.system('mv Dict.h %s/interface/.' % project_dir)
-os.system('mv Dict.so %s/lib/.' % project_dir)
-os.system('rm LinkDef.h')
-os.system('rm Dict.cxx')
+if args.nodict:
+   os.system('mv Dict.h %s/interface/.' % project_dir)
+   os.system('mv Dict.so %s/lib/.' % project_dir)
+   os.system('rm LinkDef.h')
+   os.system('rm Dict.cxx')
 
