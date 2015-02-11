@@ -23,6 +23,11 @@ class Task
   end
 end
 
+def compile_string(includes, libs, src, trgt)
+  return "g++ -std=c++11 -Wl,--no-as-needed #{includes.map{|x| '-I'+x}.join(' ')} `root-config --cflags` `root-config --libs` -lboost_program_options #{libs.join(' ')} #{src} -o #{trgt}"
+end
+     
+
 def make_obj_task(source, dependencies, include_dir)
   target = source.sub(%r{(.*)/src/([^/.]*).(cc|C|cxx)},"\\1/lib/\\2.o")
   file target => dependencies do |t|
@@ -60,7 +65,7 @@ def compile_analyzer(source, libs='', *deps)
     local_includes = "#{project_dir}/interface/"
     fwk_includes = "#{fwk_dir}/interface/"
 
-    puts "g++ -I#{local_includes} -I#{fwk_includes} `root-config --cflags` `root-config --libs` -lboost_program_options #{libs} #{t.name}"
+    sh compile_string([local_includes, fwk_includes],local_libs+fwk_libs, source, t.name)
     puts t.investigation
   end 
 end

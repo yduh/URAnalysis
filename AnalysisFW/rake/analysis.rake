@@ -1,3 +1,5 @@
+tools = "#{$fwk_dir}/rake/tools.rb"
+require tools
 
 rule ".exe" => [
     #the input .cc
@@ -7,15 +9,15 @@ rule ".exe" => [
   puts t.investigation
   project_dir = ENV['URA_PROJECT']
   fwk_dir = ENV['URA']+'/AnalysisFW'
-  local_libs = Dir.glob("#{project_dir}/lib/*.*o").join(" ")
-  fwk_libs = Dir.glob("#{fwk_dir}/lib/*.*o").join(" ")
-  libs = ENV.fetch('URA_PROJECT_LIBS', '')
-  libs += " #{local_libs} #{fwk_libs}"
+  local_libs = Dir.glob("#{project_dir}/lib/*.*o")
+  fwk_libs = Dir.glob("#{fwk_dir}/lib/*.*o")
+  prj_libs = Array[ENV.fetch('URA_PROJECT_LIBS', '')]
   
   local_includes = "#{project_dir}/interface/"
   fwk_includes = "#{fwk_dir}/interface/"
   
-  sh "g++ -I#{local_includes} -I#{fwk_includes} `root-config --cflags` `root-config --libs` -lboost_program_options #{libs} #{t.prerequisites[0]} -o #{t.name}"
+  sh compile_string([local_includes, fwk_includes],local_libs+fwk_libs+prj_libs, t.prerequisites[0], t.name)
+  #"g++ -I#{local_includes} -I#{fwk_includes} `root-config --cflags` `root-config --libs` -lboost_program_options #{libs} #{t.prerequisites[0]} -o #{t.name}"
 end
 
 rule ".cfg" do |t|
