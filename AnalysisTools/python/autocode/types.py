@@ -11,6 +11,9 @@ _templates_dir = os.path.join(
    os.environ['CMSSW_BASE'],
    'src/URAnalysis/AnalysisTools/python/autocode/templates'
 )
+_lorentz_vector_members = set(['pt', 'eta', 'phi', 'et', 'mass'])
+_lorentz_setter = 'setLotentzVector'
+
 def get_template(name):
    '''Gets the template from
    AnalysisTools/python/templates'''
@@ -137,19 +140,18 @@ class ObjectMeta(object):
          return self._single_getter()
 
    def _single_getter(self):
-      return ''
-      set_trace()
       dump = '\n'.join(
          'obj.set%s(%s);' % (i.attr,i.var) for i in self.branches
+         if i.attr not in _lorentz_vector_members
          )
       
       val = cpp_format(
          ObjectMeta.getter_template,
          RET_TYPE = self.as_struct.name,
          NAME = self.prefix,
+         BRANCH_DUMP = dump
          )
-      set_trace()
-      
+      return val
 
    def _vobj_getter(self):
       #make iterators
@@ -170,7 +172,34 @@ class ObjectMeta(object):
          )
       it_dump = '\n'.join(
          'obj.set%s(*it_%s);' % (i.attr,i.var) for i in self.branches
+         if i.attr not in _lorentz_vector_members
          )
+
+      lv_pars = dict(
+         (i.attr,i.var) for i in self.branches
+         if i.attr in _lorentz_vector_members
+         )
+      if len(lv_pars) >= 2:
+         if 'pt' not in lv_pars:
+            lv_pars['pt'] = lv_pars['et']
+            del lv_pars['et']
+
+         if len(lv_pars) == 2: #pt/et, phi
+            it_dump += '\nobj.%s(*it_%s, *it_%s);' \
+               % (_lorentz_setter, lv_pars['pt'], lv_pars['phi'])
+         elif len(lv_pars) == 3: #pt/et, eta, phi
+            it_dump += '\nobj.%s(*it_%s, *it_%s, *it_%s);' \
+               % (_lorentz_setter, lv_pars['pt'], lv_pars['eta'], lv_pars['phi'])
+         elif len(lv_pars) == 4: #pt/et, eta, phi, mass
+            it_dump += '\nobj.%s(*it_%s, *it_%s, *it_%s, *it_%s);' \
+               % (_lorentz_setter, lv_pars['pt'], lv_pars['eta'],
+                  lv_pars['phi'], lv_pars['mass'])
+      else:
+         it_dump += '\n'+'\n'.join(
+            'obj.set%s(*it_%s);' % (i.attr,i.var) for i in self.branches
+            if i.attr in _lorentz_vector_members
+            )
+
       return cpp_format(
          ObjectMeta.vgetter_template,
          OBJ_VAR=self.obj_container,
@@ -237,7 +266,14 @@ class ObjStruct(object):
          self.name = self.name[:-1] #remove 's'
       self.members = [
          ObjStruct.Member(i) for i in obj.branches
+         if i.attr not in _lorentz_vector_members 
          ]
+      self.lorentz_members = [
+         i.attr for i in obj.branches
+         if i.attr in _lorentz_vector_members
+         ]
+      self.lorentz_members.sort()
+      #print self.name, [i.attr for i in obj.branches if i.attr in ObjStruct.lvector_members ]
 
    def cpp_dump(self):
       members = '\n'.join(
@@ -258,8 +294,22 @@ class ObjStruct(object):
       setters = '\n'.join(
          i.cpp_setter() for i in self.members
          )
+      inheritance = ""
+      if len(self.lorentz_members) > 0:
+         inheritance = ': public TLorentzVector'
+         if len(self.lorentz_members) == 2: #pt/et, phi
+            setters += '\nvoid %s(float pt, float phi){SetPtEtaPhiM(pt, 0., phi, 0.);}' % _lorentz_setter
+         elif len(self.lorentz_members) == 3: #pt/et, eta, phi
+            setters += '\nvoid %s(float pt, float eta, float phi){SetPtEtaPhiM(pt, eta, phi, 0.);}' % _lorentz_setter
+         elif len(self.lorentz_members) == 4: #pt/et, eta, phi, mass
+            setters += '\nvoid %s(float pt, float eta, float phi, float mass){SetPtEtaPhiM(pt, eta, phi, mass);}' % _lorentz_setter
+
+         void_init = '%s\n%s' % ('TLorentzVector(),', void_init)
+         getters += '\nClassDef(%s, 1);' % self.name
+         
       return cpp_format(
          ObjStruct.cpp_template,
+         INHERITANCE=inheritance,
          NAME=self.name,
          MEMBERS=members,
          INPUTS=inputs,

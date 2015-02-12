@@ -1,4 +1,4 @@
-const {RET_TYPE}& {NAME}(){
+const {RET_TYPE} {NAME}(){
   //non-vectorial objects are recomputed every
   //time for simplicity 
   load{RET_TYPE}();

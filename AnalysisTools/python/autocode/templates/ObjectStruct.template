@@ -1,4 +1,4 @@
-class {NAME}{
+class {NAME}{INHERITANCE}{
 friend class URStreamer;
 public:
 //  {NAME}({INPUTS}):
