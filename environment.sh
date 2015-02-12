@@ -33,7 +33,7 @@ if [ -d "$URA_BASE/../.SCRAM" ]; then
 else
     echo "exposing python"
     export PYTHONPATH=$URA/external:$PYTHONPATH
-    install/expose_python.py
+    $URA/install/expose_python.py
 fi
 
 # Don't require a scram build to get updated scripts
