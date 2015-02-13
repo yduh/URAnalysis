@@ -20,7 +20,7 @@ template <typename EDObject>
 class ObjExpression{
 public:
   ObjExpression(std::string &expr):
-    functor_(expr) {}
+    functor_(expr, true) {} //lazy parsing
   virtual ~ObjExpression() {}
   virtual void fill(const EDObject &obj) =0;
   virtual void reserve(size_t i) {}
