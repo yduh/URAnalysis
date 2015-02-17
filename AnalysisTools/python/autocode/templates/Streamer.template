@@ -18,7 +18,7 @@ public:
     {MEMBER_INIT}
   {
     tree_ = tree;
-    current_entry_ = 0;
+    current_entry_ = -1;
     entries_ = tree_->GetEntries();
     tree_->SetBranchStatus("*",0); 
     {BRANCH_SETTING}
@@ -31,9 +31,9 @@ public:
 
   bool next(){
     {EVT_CLEAR}
+    current_entry_++;
     if(current_entry_ < entries_){
       tree_->GetEntry(current_entry_);
-      current_entry_++;
       return true;
     }
     return false;
