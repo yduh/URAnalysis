@@ -38,6 +38,19 @@ def make_ntuple(
          )
       ntuple += process.trigger
 
+   process.rho = cms.EDAnalyzer(
+      'NtupleDoubleProducer',
+      src = cms.InputTag(
+         kwargs.get(
+            'rho',
+            'fixedGridRhoFastjetAll'
+            )
+         ),
+      branches = cms.VPSet(
+         branches.make_branch_pset('value'))
+      )
+   ntuple += process.rho
+
    process.muons = cms.EDAnalyzer(
       'NtupleMuonsProducer',
       src = cms.InputTag(

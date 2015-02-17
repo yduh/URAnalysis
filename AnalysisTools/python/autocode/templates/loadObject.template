@@ -2,5 +2,6 @@ void load{NAME}(){
   if(!{LOAD_VAR}){
     {BRANCH_SETTING}
     {LOAD_VAR} = true;
+    tree_->GetEntry(current_entry_);
   }
 }
