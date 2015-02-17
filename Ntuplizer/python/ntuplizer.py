@@ -67,6 +67,21 @@ def make_ntuple(
    )
    ntuple += process.muons
 
+   process.genjets = cms.EDAnalyzer(
+      'NtupleGenJetsProducer',
+      src = cms.InputTag(
+         kwargs.get(
+			'genjets',
+            'slimmedGenJets'
+            )
+         ),
+      branches = cms.VPSet(
+         branches.kinematics +
+         branches.genjet_specific
+         )
+   )
+   ntuple += process.genjets
+
    process.jets = cms.EDAnalyzer(
       'NtupleJetsProducer',
       src = cms.InputTag(
