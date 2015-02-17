@@ -24,7 +24,7 @@ class Task
 end
 
 def compile_string(includes, libs, src, trgt)
-  return "g++ -std=c++11 -Wl,--no-as-needed #{includes.map{|x| '-I'+x}.join(' ')} `root-config --cflags` `root-config --libs` -lboost_program_options #{libs.join(' ')} #{src} -o #{trgt}"
+  return "g++ -g -std=c++11 -Wl,--no-as-needed #{includes.map{|x| '-I'+x}.join(' ')} `root-config --cflags` `root-config --libs` -lMinuit -lboost_program_options #{libs.join(' ')} #{src} -o #{trgt}"
 end
      
 

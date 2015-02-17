@@ -64,12 +64,18 @@ muon_specific = [
    make_branch_pset('numChambers', 'numberOfChambers', '/I'), 
    #make_branch_pset('numChambersWithSegments', 'numberOfMatches(2)', '/I'), #2 = Muon::SegmentAndTrackArbitration
    make_branch_pset('numMatchedStations', 'numberOfMatchedStations()', '/I'),
+   make_branch_pset('dB', 'dB()', '/F'),
 
    #global track attributes
    make_branch_pset('ptErr', '? globalTrack().isNonnull() ? globalTrack().ptError() : -1'),
    make_branch_pset('chi2', '? globalTrack().isNonnull() ? globalTrack().chi2() : -1'),
    make_branch_pset('ndof', '? globalTrack().isNonnull() ? globalTrack().ndof() : -1', '/I'),
    make_branch_pset('validHits', '? globalTrack().isNonnull() ? globalTrack().hitPattern().numberOfValidMuonHits() : -1'),
+
+   #innertrack
+   make_branch_pset('pixelHits', '? innerTrack().isNonnull() ? innerTrack().hitPattern().numberOfValidPixelHits() : -1'),
+   make_branch_pset('trackerLayers', '? innerTrack().isNonnull() ? innerTrack().hitPattern().trackerLayersWithMeasurement() : -1'),
+   make_branch_pset('dz', '? innerTrack().isNonnull() ? innerTrack().dz() : -1'),
 
    #id
    make_branch_pset('isGlobal'    ,'isGlobalMuon'    , '/O'),
@@ -104,8 +110,10 @@ btaggging = [
    make_branch_pset('trkHiEff', 'bDiscriminator("trackCountingHighEffBJetTags")'),
    make_branch_pset('ssvHiEff', 'bDiscriminator("simpleSecondaryVertexHighEffBJetTags")'),
    make_branch_pset('ssvHiPur', 'bDiscriminator("simpleSecondaryVertexHighPurBJetTags")'),
-   make_branch_pset('csv', 'bDiscriminator("combinedSecondaryVertexBJetTags")'),
-   make_branch_pset('csvIncl', 'bDiscriminator("combinedInclusiveSecondaryVertexBJetTags")'),
+   #make_branch_pset('csv', 'bDiscriminator("combinedSecondaryVertexBJetTags")'),
+   make_branch_pset('csv', 'bDiscriminator("combinedSecondaryVertexV2BJetTags")'),
+   #make_branch_pset('csvIncl', 'bDiscriminator("combinedInclusiveSecondaryVertexBJetTags")'),
+   make_branch_pset('csvIncl', 'bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags")'),
    make_branch_pset('vtxMass' , 'userFloat("vtxMass")'),
    make_branch_pset('vtxNtracks' , 'userFloat("vtxNtracks")'),
    make_branch_pset('vtx3DVal' , 'userFloat("vtx3DVal")'),
@@ -166,6 +174,9 @@ electron_specific = [
    make_branch_pset('DEtaSCTrk', 'deltaEtaSuperClusterTrackAtVtx()'),
    make_branch_pset('DPhiSCTrk', 'deltaPhiSuperClusterTrackAtVtx()'),
    make_branch_pset('ecalEnergy', 'correctedEcalEnergy()'),
+   make_branch_pset('dB', 'dB()'),
+   make_branch_pset('dz', 'gsfTrack().dz()'),
+   make_branch_pset('passConversionVeto', 'passConversionVeto()', '/O'),
 
    #topology info
    make_branch_pset('isEB', '', '/O'),
