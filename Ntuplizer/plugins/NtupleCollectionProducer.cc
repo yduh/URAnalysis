@@ -114,6 +114,7 @@ void NtupleCollectionProducer<EDObject>::analyze(const edm::Event& evt, const ed
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
 
 //CMSSW does not like templates, so use typedefs
 typedef NtupleCollectionProducer<pat::Muon> NtupleMuonsProducer;
@@ -124,6 +125,7 @@ typedef NtupleCollectionProducer<pat::Photon> NtuplePhotonsProducer;
 typedef NtupleCollectionProducer<reco::Vertex> NtupleVerticesProducer; 
 typedef NtupleCollectionProducer<PileupSummaryInfo> NtuplePUInfoProducer; 
 typedef NtupleCollectionProducer<reco::GenParticle> NtupleGenParticlesProducer; 
+typedef NtupleCollectionProducer<reco::GenJet> NtupleGenJetsProducer; 
 
 //define CMSSW plug-ins
 DEFINE_FWK_MODULE(NtupleMuonsProducer);
@@ -134,6 +136,7 @@ DEFINE_FWK_MODULE(NtuplePhotonsProducer);
 DEFINE_FWK_MODULE(NtupleVerticesProducer);
 DEFINE_FWK_MODULE(NtuplePUInfoProducer);
 DEFINE_FWK_MODULE(NtupleGenParticlesProducer);
+DEFINE_FWK_MODULE(NtupleGenJetsProducer);
 
 
 

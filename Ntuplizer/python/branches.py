@@ -61,6 +61,10 @@ isolation = [
    make_branch_pset('puIso', 'puChargedHadronIso'),
 ]
 
+genjet_specific = [
+   make_branch_pset('invisibleEnergy', 'invisibleEnergy()')
+]
+
 muon_specific = [
    make_branch_pset('ECalEnergy', 'calEnergy().em'),
    make_branch_pset('HCalEnergy', 'calEnergy().had'),
