@@ -85,11 +85,11 @@ void PATIpEmbedder<T>::produce(edm::Event& evt, const edm::EventSetup& es) {
     const T& object = handle->at(iObject);
     std::vector<const reco::Track*> tracks = trackExtractor_(object);
     const reco::Track* track = tracks.size() ? tracks.at(0) : NULL;
-    double ip = -1;
-    double dz = -1;
+    double ip = -999;
+    double dz = -999;
     double vz = -999;
-    double ip3D = -1;
-    double ip3DS = -1;
+    double ip3D = -999;
+    double ip3DS = -999;
     // double tip = -1;
     // double tipS = -1;
 
