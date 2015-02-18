@@ -32,13 +32,16 @@ def make_branch_pset(branch_name, expr='', stored_type=''):
       )
 
 kinematics = [
-   make_branch_pset('px'),
-   make_branch_pset('py'),
-   make_branch_pset('pz'),
    make_branch_pset('pt'),
    make_branch_pset('eta'),
    make_branch_pset('phi'),
    make_branch_pset('charge','','/I'),
+]
+
+vertex_info = [
+   make_branch_pset('dB'),
+   make_branch_pset('ipDXY', 'userFloat("ipDXY")'),
+   make_branch_pset('dz', 'userFloat("dz")'),
 ]
 
 trigger = [
@@ -64,7 +67,6 @@ muon_specific = [
    make_branch_pset('numChambers', 'numberOfChambers', '/I'), 
    #make_branch_pset('numChambersWithSegments', 'numberOfMatches(2)', '/I'), #2 = Muon::SegmentAndTrackArbitration
    make_branch_pset('numMatchedStations', 'numberOfMatchedStations()', '/I'),
-   make_branch_pset('dB', 'dB()', '/F'),
 
    #global track attributes
    make_branch_pset('ptErr', '? globalTrack().isNonnull() ? globalTrack().ptError() : -1'),
@@ -75,7 +77,6 @@ muon_specific = [
    #innertrack
    make_branch_pset('pixelHits', '? innerTrack().isNonnull() ? innerTrack().hitPattern().numberOfValidPixelHits() : -1'),
    make_branch_pset('trackerLayers', '? innerTrack().isNonnull() ? innerTrack().hitPattern().trackerLayersWithMeasurement() : -1'),
-   make_branch_pset('dz', '? innerTrack().isNonnull() ? innerTrack().dz() : -1'),
 
    #id
    make_branch_pset('isGlobal'    ,'isGlobalMuon'    , '/O'),
@@ -174,8 +175,6 @@ electron_specific = [
    make_branch_pset('DEtaSCTrk', 'deltaEtaSuperClusterTrackAtVtx()'),
    make_branch_pset('DPhiSCTrk', 'deltaPhiSuperClusterTrackAtVtx()'),
    make_branch_pset('ecalEnergy', 'correctedEcalEnergy()'),
-   make_branch_pset('dB', 'dB()'),
-   make_branch_pset('dz', 'gsfTrack().dz()'),
    make_branch_pset('passConversionVeto', 'passConversionVeto()', '/O'),
 
    #topology info

@@ -2,7 +2,12 @@
   <flags EDM_PLUGIN="1"/>
   <use name="FWCore/Framework"/>
   <use name="FWCore/Common"/>
+  <use name="TrackingTools/TransientTrack"/>
+  <use name="TrackingTools/Records"/>
+  <use name="TrackingTools/IPTools"/>
+  <use name="DataFormats/VertexReco"/>
   <use name="URAnalysis/DataFormats"/>
+  <use name="URAnalysis/PATTools"/>
   <use name="FWCore/PluginManager"/>
   <use name="FWCore/ParameterSet"/>
   <use name="DQMServices/Core"/>

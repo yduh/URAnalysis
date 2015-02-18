@@ -22,6 +22,16 @@ for path in mupaths:
    #print matcher_name, globals()[matcher_name].matchedCuts
    customMuons *= globals()[matcher_name]
 
+muonIpInfo = cms.EDProducer(
+   'PATMuonIpEmbedder',
+   src = cms.InputTag('urSkimmedMuons'),
+   vtxSrc = cms.InputTag('fixme'),
+   #ensure we do not chain it as it makes
+   #a ValueMap
+   noSeqChain = cms.bool(True),
+)
+customMuons *= muonIpInfo
+
 urMuons = cms.EDProducer(
    'PATMuonsEmbedder',
    src = cms.InputTag('fixme'),
@@ -30,6 +40,13 @@ urMuons = cms.EDProducer(
       ),
    trigPaths = cms.vstring(
       mupaths
+      ),
+   floatMaps = cms.PSet(
+      ipDXY = cms.InputTag("muonIpInfo:ipDXY"),
+      dz	  = cms.InputTag("muonIpInfo:dz"	 ),
+      vz	  = cms.InputTag("muonIpInfo:vz"	 ),
+      ip3D  = cms.InputTag("muonIpInfo:ip3D" ),
+      ip3DS = cms.InputTag("muonIpInfo:ip3DS"),
       )
 )
 customMuons *= urMuons

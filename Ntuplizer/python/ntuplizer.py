@@ -61,6 +61,7 @@ def make_ntuple(
          ),
       branches = cms.VPSet(
          branches.kinematics +
+         branches.vertex_info +
          branches.isolation +
          branches.muon_specific
          )
@@ -94,6 +95,7 @@ def make_ntuple(
       branches = cms.VPSet(
          branches.kinematics +
          branches.isolation +
+         branches.vertex_info +
          branches.electron_specific +
          branches.ecal_cluster_specific + 
          branches.super_cluster_specific

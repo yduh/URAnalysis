@@ -23,6 +23,17 @@ for path in elpaths:
       )
    customElectrons *= globals()[matcher_name]
 
+
+electronIpInfo = cms.EDProducer(
+   'PATElectronIpEmbedder',
+   src = cms.InputTag('urSkimmedElectrons'),
+   vtxSrc = cms.InputTag('fixme'),
+   #ensure we do not chain it as it makes
+   #a ValueMap
+   noSeqChain = cms.bool(True),
+)
+customElectrons *= electronIpInfo
+
 urElectrons = cms.EDProducer(
    'PATElectronsEmbedder',
    src = cms.InputTag('fixme'),
@@ -31,6 +42,13 @@ urElectrons = cms.EDProducer(
       ),
    trigPaths = cms.vstring(
       elpaths
+      ),
+   floatMaps = cms.PSet(
+      ipDXY = cms.InputTag("electronIpInfo:ipDXY"),
+      dz	  = cms.InputTag("electronIpInfo:dz"	 ),
+      vz	  = cms.InputTag("electronIpInfo:vz"	 ),
+      ip3D  = cms.InputTag("electronIpInfo:ip3D" ),
+      ip3DS = cms.InputTag("electronIpInfo:ip3DS"),
       )
 )
 customElectrons *= urElectrons
