@@ -12,7 +12,7 @@ class Struct:
     def clone(self, **subs):
         newd = deepcopy(self.__dict__)
         newd.update(subs)
-        return struct(**newd)
+        return Struct(**newd)
 
     def __hash__(self):
         return self.__dict__.__repr__().__hash__()
