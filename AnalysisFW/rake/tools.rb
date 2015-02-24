@@ -38,7 +38,7 @@ end
 
 def make_obj_task(source, dependencies, include_dir)
   target = source.sub(%r{(.*)/src/([^/.]*).(cc|C|cxx)},"\\1/lib/\\2.o")
-  file target => dependencies do |t|
+  file target => dependencies+[source] do |t|
     #puts target
     #FNAL LPC patch for boost
     fnal_include = ''
