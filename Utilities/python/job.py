@@ -88,6 +88,7 @@ class Job(object):
       cfg.USER.storage_element = os.environ['URA_CRAB2_SE']
       cfg.USER.storage_path = os.environ['URA_CRAB2_SEPATH']
       cfg.USER.user_remote_dir = os.path.join('/', self.id, self.name, '')
+      cfg.USER.ui_working_dir = '_'.join((self.id, self.name))
 
       cfg.CRAB.scheduler = 'remoteGlidein'
       cfg.CRAB.jobtype = 'cmssw'
