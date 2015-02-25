@@ -36,7 +36,7 @@ def compile_string(includes, libs, src, trgt)
 end
      
 
-def make_obj_task(source, dependencies, include_dir)
+def make_obj_task(source, dependencies, *include_dir)
   target = source.sub(%r{(.*)/src/([^/.]*).(cc|C|cxx)},"\\1/lib/\\2.o")
   file target => dependencies+[source] do |t|
     #puts target
@@ -46,18 +46,22 @@ def make_obj_task(source, dependencies, include_dir)
       #assume we are using CMSSW
       fnal_include="-I/cvmfs/cms.cern.ch/#{ENV['SCRAM_ARCH']}/external/boost/1.57.0/include/"
     end
-    sh "g++ -I#{include_dir} #{fnal_include} `root-config --cflags` -Wall -c #{source} -o #{target}"
+    sh "g++ #{include_dirs.map{|x| "-I#{x}"}.join(' ')} #{fnal_include} `root-config --cflags` -Wall -c #{source} -o #{target}"
   end
   return target
 end
 
-def make_libs(project_dir)
+def make_libs(project_dir, deps='')
   #list all the .cc .C and .cxx files to be compiled  
   to_be_compiled = Dir.glob("#{project_dir}/src/*").select{|x| %r{#{project_dir}/src/(.*).(cc|C|cxx)$}.match(x)}
   #list all the headers
   headers = Dir.glob("#{project_dir}/interface/*.h")
   #for each file make a .o file task
-  targets = to_be_compiled.map{|x| make_obj_task(x, headers, "#{project_dir}/interface/")}
+  if deps == ''
+    targets = to_be_compiled.map{|x| make_obj_task(x, headers, "#{project_dir}/interface/")}
+  else
+    targets = to_be_compiled.map{|x| make_obj_task(x, headers, "#{project_dir}/interface/", "#{deps}/interface/")}
+  end
   #and put it in the timestamp task
   lib_timestamp = "#{project_dir}/lib/.lib_timestamp"
   file lib_timestamp => targets do |t|
