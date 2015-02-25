@@ -36,7 +36,7 @@ def compile_string(includes, libs, src, trgt)
 end
      
 
-def make_obj_task(source, dependencies, *include_dir)
+def make_obj_task(source, dependencies, *include_dirs)
   target = source.sub(%r{(.*)/src/([^/.]*).(cc|C|cxx)},"\\1/lib/\\2.o")
   file target => dependencies+[source] do |t|
     #puts target
