@@ -70,4 +70,6 @@ if args.crab == 3:
 elif args.crab == 2:
    crab_cfgs = [job.save_as_crab2() for job in jobs]
    print 'To submit run:'
-   print '\n'.join('crab -submit %s' % cfg for cfg in crab_cfgs)
+   print 'source %s' % os.environ['CRAB2_LOCATION']
+   print '\n'.join('crab -create -cfg %s' % cfg for cfg in crab_cfgs)
+   print '\n'.join('crab -submit -c %s' % cfg.strip('crab_').split('.')[0] for cfg in crab_cfgs)
