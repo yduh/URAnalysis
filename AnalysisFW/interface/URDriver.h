@@ -23,6 +23,7 @@ Class to handle the analysis of Ntuples in a threaded way
 #include "TThread.h"
 #include "TROOT.h"
 #include "ProgressBar.h"
+#include "TTreeCache.h"
 
 template<typename T>
 class AnalysisWorker: public Worker{
@@ -54,6 +55,8 @@ public:
 				
 				if(tree){
 					//assign to analyzer
+					TTreeCache::SetLearnEntries(200);
+					tree->SetCacheSize(10000000);
 					setTree(tree);
 					work();
 				} else {
@@ -199,6 +202,8 @@ public:
 						TTree *tree = (TTree*) file->Get("Events");
 						if(tree)
 						{
+							TTreeCache::SetLearnEntries(200);
+							tree->SetCacheSize(10000000);
 							//assign to analyzer
 							workers[counter]->setTree(tree);
 							counter++;
