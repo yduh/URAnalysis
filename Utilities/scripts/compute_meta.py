@@ -27,6 +27,7 @@ class LumiJson():
       #lumis are collapsed
       self.run_map = {}
       self.evts = 0
+      self.has_dupes = 0
       
    def append(self, run, lumi, evts, filename):
       self.evts += evts
@@ -35,6 +36,7 @@ class LumiJson():
       else:
          #check if lumi already present
          if lumi in self.run_map[run]:
+            self.has_dupes += 1
             log.warning(
                "run: %i lumi: %i already present " 
                "in other files other than %s, are "
@@ -42,6 +44,13 @@ class LumiJson():
                run, lumi, filename)
          else:
             self.run_map[run].add(lumi)
+
+   def warn(self):
+      if self.has_dupes:
+         log.error(
+            "The file set contains %s potential"
+            " duplicate lumi sections, you may "
+            "want to double check!", self.has_dupes)
 
    @staticmethod
    def collapse(lumiset):
@@ -88,8 +97,8 @@ class Extractor(threading.Thread):
       self.queue = queue
       self.histo = pu_histo
       self.json = out_json
-   
-   def run(self):
+
+   def extract(self):
       #infinite loop!
       while True:
          fname = ''
@@ -125,6 +134,10 @@ class Extractor(threading.Thread):
                   )
          tfile.Close()
 
+   
+   def run(self):
+      self.extract()
+
 if __name__=='__main__':
    parser = ArgumentParser(description=__doc__)
    parser.add_argument('flist', metavar='files.txt', type=str,
@@ -136,8 +149,18 @@ if __name__=='__main__':
                        default=False, help='Computes the true PU distribution')
    parser.add_argument('--threads', dest='threads', type=int, default=4,
                        help='Number of threads used')
+   parser.add_argument('--verbose', dest='verbose', action='store_true',
+                       default=False, help='More printout')
+   parser.add_argument('--quiet', dest='quiet', action='store_true',
+                       default=False, help='minimal printout')
 
    args = parser.parse_args()
+
+   if args.verbose:
+      log.setLevel(logging.DEBUG)
+   elif args.quiet:
+      log.setLevel(logging.ERROR)
+
    if not os.path.isfile(args.flist):
       raise IOError('File %s does not exist!' % args.flist)
       #logging.error('ERROR: file %s does not exist!' % args.flist)
@@ -154,19 +177,25 @@ if __name__=='__main__':
    log.debug('creating shared objects and threads')
    pu_histo = LockedObject(None) if args.isMc else None
    out_json = LockedObject(LumiJson())
-   threads = [Extractor("Thread %i" % i, file_queue, pu_histo, out_json) 
-              for i in xrange(args.threads)]
+   if args.threads > 1:
+      threads = [Extractor("Thread %i" % i, file_queue, pu_histo, out_json) 
+                 for i in xrange(args.threads)]
 
-   log.debug('starting threaded analysis')
-   for thread in threads:
-      thread.start()
+      log.debug('starting threaded analysis')
+      for thread in threads:
+         thread.start()
    
-   log.debug('waiting for threads to finish')
-   for thread in threads:
-      thread.join()
+      log.debug('waiting for threads to finish')
+      for thread in threads:
+         thread.join()
+   else:
+      log.debug('starting non-threaded analysis')
+      extractor = Extractor("Single Processor", file_queue, pu_histo, out_json)
+      extractor.extract()
 
    log.debug('saving information to %s' % args.output)
    with out_json as json:
+      json.warn()
       json.dump(args.output)
 
    log.debug('saving root information to %s' % args.output.replace('.json', '.pu.root'))
