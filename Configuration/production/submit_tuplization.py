@@ -26,12 +26,15 @@ parser.add_argument('--samples', dest='samples', type=str,
                     nargs='+', help='Samples to run on, POSIX regex allowed')
 parser.add_argument('--sample-def', dest='sample_def', type=str,
                     help='json file containing the samples definition ')
-parser.add_argument('--crab', dest='crab', action='store_true',
-                    default=False, help='Submit to crab')
+parser.add_argument('--crab', dest='crab', type=int,
+                    default=0, help='Version of crab to use')
 parser.add_argument('--local', dest='local', action='store_true',
                     default=False, help='Submit to local (NOT SUPPORTED YET)')
 
 args = parser.parse_args()
+
+if not (bool(args.crab) or args.local):
+   raise ValueError('You did not specify how you want to run! (crab2/3 or local)')
 
 if not os.path.isfile(args.sample_def):
    raise ValueError('file %s does not exist' % args.sample_def)
@@ -59,7 +62,14 @@ jobs = [
    for sample in to_submit
 ]
 
-if args.crab:
+if args.crab == 3:
    crab_cfgs = [job.save_as_crab() for job in jobs]
    print 'To submit run:'
+   print 'source %s' % os.environ['CRAB3_LOCATION']
    print '\n'.join('crab submit %s' % cfg for cfg in crab_cfgs)
+elif args.crab == 2:
+   crab_cfgs = [job.save_as_crab2() for job in jobs]
+   print 'To submit run:'
+   print 'source %s' % os.environ['CRAB2_LOCATION']
+   print '\n'.join('crab -create -cfg %s' % cfg for cfg in crab_cfgs)
+   print '\n'.join('crab -submit -c %s' % cfg.strip('crab_').split('.')[0] for cfg in crab_cfgs)

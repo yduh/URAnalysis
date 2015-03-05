@@ -61,6 +61,7 @@ def make_ntuple(
          ),
       branches = cms.VPSet(
          branches.kinematics +
+         branches.vertex_info +
          branches.isolation +
          branches.muon_specific
          )
@@ -94,6 +95,7 @@ def make_ntuple(
       branches = cms.VPSet(
          branches.kinematics +
          branches.isolation +
+         branches.vertex_info +
          branches.electron_specific +
          branches.ecal_cluster_specific + 
          branches.super_cluster_specific
@@ -149,6 +151,8 @@ def make_ntuple(
    #  MC Only
    #############
    if isMC:
+     process.jets.branches.extend(branches.jet_specific_mc)
+
      #FIXME: add it!
      process.genInfo = cms.EDAnalyzer(
         'NtupleGenInfoProducer',
@@ -200,6 +204,21 @@ def make_ntuple(
         src = cms.InputTag('prunedGenParticles'),
      )
      ntuple += process.genPInheritance
+
+     process.genjets = cms.EDAnalyzer(
+        'NtupleGenJetsProducer',
+        src = cms.InputTag(
+           kwargs.get(
+	    	'genjets',
+              'slimmedGenJets'
+              )
+           ),
+        branches = cms.VPSet(
+           branches.kinematics +
+           branches.genjet_specific
+           )
+     )
+     ntuple += process.genjets
 
    process.ntupleEnd = cms.EDAnalyzer('TreeFiller')
    return ntuple, process.ntupleEnd

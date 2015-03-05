@@ -160,6 +160,7 @@ class ObjectMeta(object):
          #'auto it_{var} = {var}->begin();'.format(
             #var = i.var) for i in self.branches
          #)
+      vsize = '%s->size()' % self.branches[0].var
       iterators = '\n'.join(
          'auto it_{var} = {var}->cbegin();'.format(
             var = i.var) for i in self.branches
@@ -203,6 +204,7 @@ class ObjectMeta(object):
       return cpp_format(
          ObjectMeta.vgetter_template,
          OBJ_VAR=self.obj_container,
+         VSIZE=vsize,
          RET_TYPE = self.as_struct.name,
          NAME = self.prefix,
          ITRATORS = iterators,

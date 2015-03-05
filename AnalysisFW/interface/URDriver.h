@@ -22,48 +22,62 @@ Class to handle the analysis of Ntuples in a threaded way
 #include <sstream>
 #include "TThread.h"
 #include "TROOT.h"
+#include "ProgressBar.h"
+#include "TTreeCache.h"
 
 template<typename T>
 class AnalysisWorker: public Worker{
 public:
-  AnalysisWorker(std::string id, SafeQueue<std::string>& inputs, std::string outname):
+  AnalysisWorker(std::string id, std::string outname):
     Worker(id),
-    inputs_(inputs),
     analyzer_(outname)
   {    
+		Logger::log().debug() << id_ << ": Initializing analyzer" << std::endl;
     analyzer_.begin();
   }
 
-private:
-  virtual void work()
-  {
+	void setTree(TTree* tree) {analyzer_.setTree(tree);}
+	void end() {analyzer_.end();}
+
+	void start_nothread(SafeQueue<std::string>& inputs_, ProgressBar &bar_) 
+	{
     while(!inputs_.empty())
     {
       //get input file name from the queue
       std::string input_file = inputs_.pop();
       Logger::log().debug() << id_ << ": got input file: " <<
-	input_file << std::endl;
+				input_file << std::endl;
 
       //open and read it
       TFile *file = TFile::Open(input_file.c_str());
-      TTree *tree = (TTree*) file->Get("Events");
-
-      //assign to analyzer
-      analyzer_.setTree(tree);
-
-      //analyze
-      Logger::log().debug() << id_ << ": Analyzing file" <<
-	input_file << std::endl;
-      analyzer_.analyze();
-
+			if(file){
+				TTree *tree = (TTree*) file->Get("Events");
+				
+				if(tree){
+					//assign to analyzer
+					TTreeCache::SetLearnEntries(200);
+					tree->SetCacheSize(10000000);
+					setTree(tree);
+					work();
+				} else {
+					Logger::log().error() << id_ << ": could not read the tree in " <<
+						input_file << " properly" << std::endl;
+				}
+			} else {
+				Logger::log().error() << id_ << ": could not open file" <<
+					input_file << " properly" << std::endl;
+			}
       file->Close();
+      bar_.update();
     }
-    analyzer_.end();
     Logger::log().debug() << id_ <<
-      "No more files to analyze, exiting" << std::endl;
-  }
+      "No more files to analyze, exiting" << std::endl;		
+		end();
+	}
+
+private:
+  virtual void work(){ analyzer_.analyze(); }
   T analyzer_;
-  SafeQueue<std::string> &inputs_;
 };
 
 template<typename T>
@@ -88,7 +102,8 @@ public:
 
     opts::options_description &generic = parser.optionGroup("generic");
     generic.add_options()
-      ("verbose,v", "prints debugging output");
+      ("verbose,v", "prints debugging output")
+      ("quiet,q", "less printout");
 
     //set logger level
     Logger::log().setLevel(Logger::Level::WARNING);
@@ -106,11 +121,17 @@ public:
     if(values.count("verbose"))
     {
       Logger::log().warning() << "Setting the log level to DEBUG. " <<
-	"Brace yourselves, printout madness is coming!" << std::endl;
+				"Brace yourselves, printout madness is coming!" << std::endl;
       Logger::log().setLevel(Logger::Level::DEBUG);
     }
+    if(values.count("quiet"))
+    {
+      Logger::log().warning() << "Setting the log level to FATAL. " <<
+				"To be as quiet as possible!" << std::endl;
+      Logger::log().setLevel(Logger::Level::FATAL);
+    }
 
-    //FIXME: should test that lask of input raises error
+    //FIXME: should test that lack of input raises error
     //Get options and fill input file queue
     SafeQueue<std::string> input_files;
     std::string file_list = values["input"].as<std::string>();
@@ -118,7 +139,10 @@ public:
     Logger::log().debug() << "Input file is: " << file_list << 
       std::endl << "Output file is: " << output_file << std::endl;
 
-    reader_.fill(input_files, file_list);
+    long int nfiles = reader_.fill(input_files, file_list);
+    //create brogress bar, update it every 5 files, to be faster
+    ProgressBar progbar(nfiles, 1); 
+
     const int n_threads = values["threads"].as<int>();
     Logger::log().debug() << "Running with " << n_threads << " threads"<< std::endl;
 
@@ -136,22 +160,89 @@ public:
       std::string outname = std::tmpnam(NULL);
       outname += ".root";
       Logger::log().debug() << "Output file of thread " << i <<
-	"will be: " << outname << std::endl;
+				"will be: " << outname << std::endl;
       
       std::ostringstream id;
       id << "AnalysisWorker_" << i;
-      workers[i] = new AnalysisWorker<T>(id.str(), input_files, outname);
+      workers[i] = new AnalysisWorker<T>(id.str(), outname);
       outputs.push_back(outname);
     }
 
     //run threads, wait for them to finish and free memory
-    Logger::log().debug() << "Starting threads" << std::endl;
-    for(int i=0; i<n_threads; i++) workers[i]->start();
+		if(n_threads > 1){
+			/* Poor man's version of threading, imposed 
+				 by ROOT standards to open TFiles sequentially
+				 For the original (and better) version look
+				 into waitForROOT6 branch!
 
-    Logger::log().debug() << "Waiting for threads to finish..." << 
-      std::endl;
-    for(int i=0; i<n_threads; i++) workers[i]->join();
-    for(int i=0; i<n_threads; i++) delete workers[i];
+				 - Loop over all the input files
+				   - open one for every thread (if available) 
+					   and set the tree to the analyzer
+					 - Run the threads in parallel
+				 - At file termination call end 
+			*/
+			while(!input_files.empty())
+			{
+				TFile *files[n_threads];// = {};
+				int counter = 0;
+				while(counter < n_threads && !input_files.empty())
+				{
+					//get input file name from the queue
+					std::string input_file = input_files.pop();
+					Logger::log().debug() << ": got input file: " <<
+						input_file << std::endl;
+
+					//open and read it
+					TFile *file = TFile::Open(input_file.c_str());
+					Logger::log().debug() << "Input file is open? " << 
+						file->IsOpen() << endl;
+					if(file)
+					{
+						files[counter] = file;
+						TTree *tree = (TTree*) file->Get("Events");
+						if(tree)
+						{
+							TTreeCache::SetLearnEntries(200);
+							tree->SetCacheSize(10000000);
+							//assign to analyzer
+							workers[counter]->setTree(tree);
+							counter++;
+						} 
+						else 
+						{
+							Logger::log().error() << ": could not read the tree in " <<
+								input_file << " properly" << std::endl;
+							file->Close();
+						}
+					} 
+					else 
+					{
+						Logger::log().error() << ": could not open file" <<
+							input_file << " properly" << std::endl;
+					}
+				}//while(counter < n_threads && !input_files.empty())
+						
+				Logger::log().debug() << "Starting " << counter << " threads" << std::endl;
+				for(int i=0; i<counter; i++) workers[i]->start();
+			
+				for(int i=0; i<counter; i++) 
+				{
+					Logger::log().debug() << "Waiting for thread "<< i <<" to finish..." << std::endl;
+					workers[i]->join();
+					Logger::log().debug() << "Thread "<< i <<" done!" << std::endl;
+					progbar.update();
+				}
+				for(int i=0; i<counter; i++) files[i]->Close();
+			}//while(!input_files.empty())
+			Logger::log().debug() << "No more files to analyze, exiting" << std::endl;
+			for(int i=0; i<n_threads; i++) workers[i]->end();
+		} //if(n_threads > 1)
+		else 
+		{
+			Logger::log().debug() << "Starting without threads!" << std::endl;
+			workers[0]->start_nothread(input_files, progbar);
+		}
+		for(int i=0; i<n_threads; i++) delete workers[i];
     
     //merge the files
     Logger::log().debug() << "Merging output files..." << std::endl;

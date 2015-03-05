@@ -11,6 +11,8 @@ if [ -d "$URA_BASE/../.SCRAM" ]; then
 
     #source site-dependent configuration
     source $URA/Configuration/site/site_configuration.sh
+		export CRAB3_LOCATION=/cvmfs/cms.cern.ch/crab3/crab.sh
+		export CRAB2_LOCATION=/cvmfs/cms.cern.ch/crab/crab.sh
 
     #re-run cmsenv, crab tends to screw up many things
     eval `scramv1 runtime -sh`

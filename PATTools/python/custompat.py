@@ -12,17 +12,25 @@ def customize(process, isMC=True, **collections):
     process.load('URAnalysis.PATTools.objects.trigger')
     collections['trigger'] = 'triggerEvent'
     
+    process.load('URAnalysis.PATTools.objects.vertices')
+    collections['vertices'] = cfgtools.chain_sequence(
+        process.customVertices,
+        collections['vertices']
+        )
+
     process.load('URAnalysis.PATTools.objects.muons')
     collections['muons'] = cfgtools.chain_sequence(
         process.customMuons,
         collections['muons']
         )
-    
+    process.muonIpInfo.vtxSrc = collections['vertices']
+
     process.load('URAnalysis.PATTools.objects.electrons')
     collections['electrons'] = cfgtools.chain_sequence(
         process.customElectrons,
         collections['electrons']
         )
+    process.electronIpInfo.vtxSrc = collections['vertices']
     
     process.load('URAnalysis.PATTools.objects.jets')
     collections['jets'] = cfgtools.chain_sequence(
@@ -32,6 +40,7 @@ def customize(process, isMC=True, **collections):
 
     process.customPAT = cms.Sequence(
         process.customTrigger *
+        process.customVertices *
         process.customMuons *
         process.customElectrons *
         process.customJets

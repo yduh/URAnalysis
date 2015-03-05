@@ -32,13 +32,16 @@ def make_branch_pset(branch_name, expr='', stored_type=''):
       )
 
 kinematics = [
-   make_branch_pset('px'),
-   make_branch_pset('py'),
-   make_branch_pset('pz'),
    make_branch_pset('pt'),
    make_branch_pset('eta'),
    make_branch_pset('phi'),
    make_branch_pset('charge','','/I'),
+]
+
+vertex_info = [
+   make_branch_pset('dB'),
+   make_branch_pset('ipDXY', 'userFloat("ipDXY")'),
+   make_branch_pset('dz', 'userFloat("dz")'),
 ]
 
 trigger = [
@@ -58,6 +61,10 @@ isolation = [
    make_branch_pset('puIso', 'puChargedHadronIso'),
 ]
 
+genjet_specific = [
+   make_branch_pset('invisibleEnergy', 'invisibleEnergy()')
+]
+
 muon_specific = [
    make_branch_pset('ECalEnergy', 'calEnergy().em'),
    make_branch_pset('HCalEnergy', 'calEnergy().had'),
@@ -70,6 +77,10 @@ muon_specific = [
    make_branch_pset('chi2', '? globalTrack().isNonnull() ? globalTrack().chi2() : -1'),
    make_branch_pset('ndof', '? globalTrack().isNonnull() ? globalTrack().ndof() : -1', '/I'),
    make_branch_pset('validHits', '? globalTrack().isNonnull() ? globalTrack().hitPattern().numberOfValidMuonHits() : -1'),
+
+   #innertrack
+   make_branch_pset('pixelHits', '? innerTrack().isNonnull() ? innerTrack().hitPattern().numberOfValidPixelHits() : -1'),
+   make_branch_pset('trackerLayers', '? innerTrack().isNonnull() ? innerTrack().hitPattern().trackerLayersWithMeasurement() : -1'),
 
    #id
    make_branch_pset('isGlobal'    ,'isGlobalMuon'    , '/O'),
@@ -104,8 +115,10 @@ btaggging = [
    make_branch_pset('trkHiEff', 'bDiscriminator("trackCountingHighEffBJetTags")'),
    make_branch_pset('ssvHiEff', 'bDiscriminator("simpleSecondaryVertexHighEffBJetTags")'),
    make_branch_pset('ssvHiPur', 'bDiscriminator("simpleSecondaryVertexHighPurBJetTags")'),
-   make_branch_pset('csv', 'bDiscriminator("combinedSecondaryVertexBJetTags")'),
-   make_branch_pset('csvIncl', 'bDiscriminator("combinedInclusiveSecondaryVertexBJetTags")'),
+   #make_branch_pset('csv', 'bDiscriminator("combinedSecondaryVertexBJetTags")'),
+   make_branch_pset('csv', 'bDiscriminator("combinedSecondaryVertexV2BJetTags")'),
+   #make_branch_pset('csvIncl', 'bDiscriminator("combinedInclusiveSecondaryVertexBJetTags")'),
+   make_branch_pset('csvIncl', 'bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags")'),
    make_branch_pset('vtxMass' , 'userFloat("vtxMass")'),
    make_branch_pset('vtxNtracks' , 'userFloat("vtxNtracks")'),
    make_branch_pset('vtx3DVal' , 'userFloat("vtx3DVal")'),
@@ -148,6 +161,11 @@ jet_specific = [
    #make_branch_pset('energyCorrectionUnc',
 ]
 
+jet_specific_mc = [
+   make_branch_pset('partonFlavour', 'jetFlavourInfo().getPartonFlavour()', '/I'),
+   make_branch_pset('hadronFlavour', 'jetFlavourInfo().getHadronFlavour()', '/I'),
+]
+
 ecal_cluster_specific = [
    make_branch_pset('e1x5'),
    #make_branch_pset('e2x5'),
@@ -166,6 +184,7 @@ electron_specific = [
    make_branch_pset('DEtaSCTrk', 'deltaEtaSuperClusterTrackAtVtx()'),
    make_branch_pset('DPhiSCTrk', 'deltaPhiSuperClusterTrackAtVtx()'),
    make_branch_pset('ecalEnergy', 'correctedEcalEnergy()'),
+   make_branch_pset('passConversionVeto', 'passConversionVeto()', '/O'),
 
    #topology info
    make_branch_pset('isEB', '', '/O'),

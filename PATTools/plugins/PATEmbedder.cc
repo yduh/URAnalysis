@@ -49,7 +49,8 @@ private:
   // ----------member data ---------------------------
   
   edm::InputTag src_;
-  //vInputTag float_maps_;
+  vInputTag float_maps_;
+  vstring ufloat_names_;
   //vInputTag int_maps_;
   vInputTag trig_matches_;
   vstring tring_paths_;
@@ -75,6 +76,12 @@ PATEmbedder<PATObject>::PATEmbedder(const edm::ParameterSet& cfg):
   trig_matches_(cfg.getParameter<vInputTag>("trigMatches")),
   tring_paths_(cfg.getParameter<vstring>("trigPaths"))
 {
+  edm::ParameterSet float_maps = cfg.getParameter<edm::ParameterSet>("floatMaps");
+  ufloat_names_ = float_maps.getParameterNames();
+  for(auto&& name : ufloat_names_){
+    float_maps_.push_back(float_maps.getParameter<edm::InputTag>(name));
+  }
+
   produces<collection>();
 }
 
@@ -101,6 +108,7 @@ PATEmbedder<PATObject>::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
   edm::Handle< collection > handle;
   iEvent.getByLabel(src_, handle);
 
+  //get all trigger matches handles
   std::vector< edm::Handle< edm::Association<pat::TriggerObjectStandAloneCollection> > > match_maps;
   for(auto&& match : trig_matches_){
     edm::Handle< edm::Association<pat::TriggerObjectStandAloneCollection> > i;
@@ -108,7 +116,18 @@ PATEmbedder<PATObject>::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
     match_maps.push_back(i);
   }
 
+  //get all user float handles
+  std::vector< edm::Handle< edm::ValueMap<float> > > float_maps;
+  for(auto&& tag : float_maps_){
+    edm::Handle< edm::ValueMap<float> > i;
+    iEvent.getByLabel(tag, i);
+    float_maps.push_back(i);
+  }
+
+  //make new collection 
   std::unique_ptr<collection> output(new collection());
+
+  //loop over the object
   for(size_t idx = 0; idx < handle->size(); idx++){
     PATObject new_cand(handle->at(idx));
     edm::Ref<collection> cand_ref(handle, idx);
@@ -121,6 +140,14 @@ PATEmbedder<PATObject>::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
       int trig_match = (int) (trigRef.isNonnull() && trigRef.isAvailable());
       new_cand.addUserInt(*path_it, trig_match);
     }
+
+    auto name_it = ufloat_names_.cbegin();
+    for(auto map_it = float_maps.cbegin(); map_it != float_maps.cend(); ++map_it, ++name_it){
+      float value = (**map_it)[cand_ref];
+      new_cand.addUserFloat(*name_it, value);
+    }
+
+    //put new candidate
     output->push_back(new_cand);
   }
 
