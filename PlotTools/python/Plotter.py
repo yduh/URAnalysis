@@ -13,8 +13,8 @@ import rootpy.plotting.views as views
 import rootpy.plotting as plotting
 from URAnalysis.PlotTools.data_views import data_views
 from URAnalysis.PlotTools.data_styles import data_styles
-from URAnalysis.PlotTools.views import RebinView
-from URAnalysis.Utilities.struct import struct
+from URAnalysis.PlotTools.views.RebinView import RebinView
+from URAnalysis.Utilities.struct import Struct
 import URAnalysis.Utilities.prettyjson as prettyjson
 import sys
 from rootpy.plotting.hist import HistStack
@@ -32,7 +32,8 @@ plotting.Legend.Draw = _monkey_patch_legend_draw
 
 class Plotter(object):
     def __init__(self, files, lumifiles, outputdir, 
-                 styles=data_styles, blinder=None, forceLumi=-1):
+                 styles=data_styles, blinder=None, forceLumi=-1, 
+                 fileMapping=True):
         ''' Initialize the Plotter object
 
         Files should be a list of SAMPLE_NAME.root files.
@@ -55,14 +56,16 @@ class Plotter(object):
             self.views['data']['unblinded_view'] = self.views['data']['view']
             # Apply a blinding function
             self.views['data']['view'] = blinder(self.views['data']['view'])
-        self.data = self.views['data']['view']
+        self.data = self.views['data']['view'] if 'data' in self.views else None
         self.keep = []
         # List of MC sample names to use.  Can be overridden.
         self.mc_samples = []
 
-        file_to_map = filter(lambda x: x.startswith('data_'), self.views.keys())[0]
+        file_to_map = filter(lambda x: x.startswith('data_'), self.views.keys())
         if not file_to_map: #no data here!
             file_to_map = self.views.keys()[0]
+        else:
+            file_to_map = file_to_map[0]
         #set_trace()
         self.file_dir_structure = Plotter.map_dir_structure( self.views[file_to_map]['file'] )
 
@@ -165,7 +168,7 @@ class Plotter(object):
 
     def make_stack(self, rebin=1, preprocess=None, folder='', sort=False):
         ''' Make a stack of the MC histograms '''
-        mc_views =  self.mc_views(self, rebin, preprocess, folder)
+        mc_views =  self.mc_views(rebin, preprocess, folder)
         return views.StackView(*mc_views, sorted=sort)
 
     def add_legend(self, samples, leftside=True, entries=None):
@@ -351,7 +354,7 @@ class Plotter(object):
         self.pad.cd()
         self.lower_pad = None
 
-    def save(self, filename, dotc=False, dotroot=False, json=False, verbose=False):
+    def save(self, filename, png=True, pdf=True, dotc=False, dotroot=False, json=False, verbose=False):
         ''' Save the current canvas contents to [filename] '''
         self.pad.Draw()
         self.canvas.Update()
@@ -359,8 +362,8 @@ class Plotter(object):
             os.makedirs(self.outputdir)
         if verbose:
             print 'saving '+os.path.join(self.outputdir, filename) + '.png'
-        self.canvas.SaveAs(os.path.join(self.outputdir, filename) + '.png')
-        self.canvas.SaveAs(os.path.join(self.outputdir, filename) + '.pdf')
+        if png: self.canvas.SaveAs(os.path.join(self.outputdir, filename) + '.png')
+        if pdf: self.canvas.SaveAs(os.path.join(self.outputdir, filename) + '.pdf')
         if dotc:
             self.canvas.SaveAs(os.path.join(self.outputdir, filename) + '.C')
         if json:
@@ -470,21 +473,26 @@ class Plotter(object):
             mc_stack.GetXaxis().SetRangeUser(xrange[0], xrange[1])
             mc_stack.Draw()
         self.keep.append(mc_stack)
-        # Draw data
-        data_view = self.get_view('data')
-        if preprocess:
-            data_view = preprocess( data_view )
-        data_view = self.get_wild_dir(
-            self.rebin_view(data_view, rebin),
-            folder
-            )
-        data = data_view.Get(variable)
-        data.Draw('same')
-        self.keep.append(data)
-        # Make sure we can see everything
-        if data.GetMaximum() > mc_stack.GetMaximum():
-            mc_stack.SetMaximum(1.2*data.GetMaximum())
+        to_legend = [mc_stack]
+        if 'data' in self.views:
+            # Draw data
+            data_view = self.get_view('data')
+            if preprocess:
+                data_view = preprocess( data_view )
+            data_view = self.get_wild_dir(
+                self.rebin_view(data_view, rebin),
+                folder
+                )
+            data = data_view.Get(variable)
+            data.Draw('same')
+            self.keep.append(data)
+            to_legend.append(data)
+            # Make sure we can see everything
+            if data.GetMaximum() > mc_stack.GetMaximum():
+                mc_stack.SetMaximum(1.2*data.GetMaximum())
+        else:
+            logging.warning("No data found! Skipping drawing data...")
         # Add legend
-        self.add_legend([data, mc_stack], leftside, entries=len(mc_stack.GetHists())+1)
+        self.add_legend(to_legend, leftside, entries=len(mc_stack.GetHists())+len(to_legend)-1)
         if show_ratio:
             self.add_ratio_plot(data, mc_stack, xrange, ratio_range=0.2)
