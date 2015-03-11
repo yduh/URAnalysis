@@ -1,7 +1,10 @@
+#! /bin/env python
+
 import URAnalysis.Utilities.prettyjson as prettyjson
 from argparse import ArgumentParser
 import os
 import sys
+from pdb import set_trace
 import logging
 logging.basicConfig(level=logging.WARNING, stream=sys.stderr)
 
