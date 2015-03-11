@@ -94,8 +94,9 @@ public:
     opts.add_options()
       ("input", opts::value<std::string>(), "path of the file containing the list of root files to be processed")
       ("output", opts::value<std::string>(), "path of the root file to be produced")
-      ("threads", opts::value<int>()->default_value(2), "number of threads to be used for processing");
-    
+      ("threads", opts::value<int>()->default_value(2), "number of threads to be used for processing")
+			("noprog", "do not show progress bar");
+		
     //make input and output positional (even though are still valid in CLI)
     args.add("input", 1);
     args.add("output", 1);
@@ -141,7 +142,7 @@ public:
 
     long int nfiles = reader_.fill(input_files, file_list);
     //create brogress bar, update it every 5 files, to be faster
-    ProgressBar progbar(nfiles, 1); 
+    ProgressBar progbar(nfiles, 1, !values.count("noprog")); 
 
     const int n_threads = values["threads"].as<int>();
     Logger::log().debug() << "Running with " << n_threads << " threads"<< std::endl;
