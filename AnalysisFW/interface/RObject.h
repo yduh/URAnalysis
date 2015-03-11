@@ -19,8 +19,10 @@ public:
 	template <class T, typename ... Args>
 	static RObject book(Args ... args)
 	{
+		T* obj = new T(args ...);
+		preprocess(obj);
 		return RObject(
-			new T(args ...),
+			obj,
 			getType<T>()
 			);
 	}
@@ -91,6 +93,9 @@ private:
   RObject(TObject *obj, Type type):
 		robj_(obj),
 		type_(type){}
+		
+	template<class T>
+	static void preprocess(T* obj) {obj->Sumw2();}
 	
 	std::shared_ptr<TObject> robj_;
   Type type_;
