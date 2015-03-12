@@ -14,6 +14,7 @@ import logging
 import os
 import rootpy.io as io
 from rootpy.plotting import views
+from pdb import set_trace
 
 log = logging.getLogger("data_views")
 
@@ -24,7 +25,7 @@ def extract_sample(filename):
     Zjets_M50
     '''
     sample = os.path.basename(filename)
-    sample = sample.replace('.root', '').replace('.lumicalc.sum', '')
+    sample = sample.replace('.root', '').replace('.lumi', '')
     return sample
 
 def read_lumi(filename):
@@ -97,6 +98,7 @@ def data_views(files, lumifiles, styles, forceLumi=-1):
     # Key = dataset name
     # Value = {intlumi, rootpy file, weight, weighted view}
     output = {}
+    has_data = False
 
     for sample in histo_files.keys():
         raw_file = histo_files[sample]
@@ -105,6 +107,7 @@ def data_views(files, lumifiles, styles, forceLumi=-1):
         if intlumi:
             weight = datalumi/intlumi
         if 'data' in sample:
+            has_data = True
             weight = 1
         log.warning("Building sample: %s => int lumi: %0.f pb-1. Weight => %0.2E", sample, intlumi, weight)
 
@@ -119,7 +122,7 @@ def data_views(files, lumifiles, styles, forceLumi=-1):
             # Set style and title
             # title = the name of the sample, rootpy Legend uses this.
             nicename = copy.copy(style['name'])
-	    log.debug("sample name %s",nicename)
+            log.debug("sample name %s",nicename)
             style_dict_no_name = dict( [ i for i in style.iteritems() if i[0] != 'name'] )
             view = views.TitleView(
                 views.StyleView(view, **style_dict_no_name), nicename
@@ -137,6 +140,9 @@ def data_views(files, lumifiles, styles, forceLumi=-1):
             'view' : view,
             'unweighted_view' : unweighted_view
         }
+
+    if not has_data:
+        return output
 
     # Merge the data into just 'data'
     log.info("Merging data together")

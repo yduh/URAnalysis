@@ -23,6 +23,7 @@ Class to handle the analysis of Ntuples in a threaded way
 #include "TThread.h"
 #include "TROOT.h"
 #include "ProgressBar.h"
+#include "TTreeCache.h"
 
 template<typename T>
 class AnalysisWorker: public Worker{
@@ -54,6 +55,8 @@ public:
 				
 				if(tree){
 					//assign to analyzer
+					TTreeCache::SetLearnEntries(200);
+					tree->SetCacheSize(10000000);
 					setTree(tree);
 					work();
 				} else {
@@ -94,7 +97,7 @@ public:
       ("threads", opts::value<int>()->default_value(2), "number of threads to be used for processing")
       ("J", opts::value<int>()->default_value(1), "total number of jobs")
       ("j", opts::value<int>()->default_value(1), "jobnumber");
-    
+	  ("noprog", "do not show progress bar");
     //make input and output positional (even though are still valid in CLI)
     args.add("input", 1);
     args.add("output", 1);
@@ -142,7 +145,7 @@ public:
 
     long int nfiles = reader_.fill(input_files, file_list, njob, njobs);
     //create brogress bar, update it every 5 files, to be faster
-    ProgressBar progbar(nfiles, 1); 
+    ProgressBar progbar(nfiles, 1, !values.count("noprog")); 
 
     const int n_threads = values["threads"].as<int>();
     Logger::log().debug() << "Running with " << n_threads << " threads"<< std::endl;
@@ -207,6 +210,8 @@ public:
 						TTree *tree = (TTree*) file->Get("Events");
 						if(tree)
 						{
+							TTreeCache::SetLearnEntries(200);
+							tree->SetCacheSize(10000000);
 							//assign to analyzer
 							workers[counter]->setTree(tree);
 							counter++;

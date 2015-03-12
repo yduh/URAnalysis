@@ -13,8 +13,6 @@ http://ndawe.github.com/rootpy/reference/rootpy.plotting.html#rootpy.plotting.co
 
 '''
 
-from FinalStateAnalysis.Utilities.solarized import colors
-
 data_styles = {
 
     'Z*jets*' : {
@@ -92,8 +90,8 @@ data_styles = {
     'TTJets*' : {
         'legendstyle' : 'f',
         'drawstyle' : 'hist',
-        'fillcolor' : colors['cyan'],
-        'linecolor' : colors['cyan'],
+        'fillcolor' : '#2aa198',
+        'linecolor' : '#2aa198',
         'name' : "t#bar{t}",
         'fillstyle': 'solid',
         },
@@ -108,8 +106,8 @@ data_styles = {
     'VH*HWW' : {
         'legendstyle' : 'f',
         'drawstyle' : 'hist',
-        'fillcolor' : colors['orange'],
-        'linecolor' : colors['orange'],
+        'fillcolor' : '#cb4b16',
+        'linecolor' : '#cb4b16',
         'name' : "VH H#rightarrowWW",
         'fillstyle': 'solid',
         },
@@ -126,32 +124,32 @@ data_styles = {
     'WZ*ZToTauTau*' : {
         'legendstyle' : 'f',
         'drawstyle' : 'hist',
-        'fillcolor' : colors['red'],
-        'linecolor' : colors['red'],
+        'fillcolor' : '#dc322f',
+        'linecolor' : '#dc322f',
         'name' : "WZ#rightarrowl#tau#tau",
         'fillstyle': 'solid',
     },
     'WZ*' : {
         'legendstyle' : 'f',
         'drawstyle' : 'hist',
-        'fillcolor' : colors['red'],
-        'linecolor' : colors['red'],
+        'fillcolor' : '#dc322f',
+        'linecolor' : '#dc322f',
         'name' : "WZ#rightarrow3l",
         'fillstyle': 'solid',
     },
     'WW*' : {
         'legendstyle' : 'f',
         'drawstyle' : 'hist',
-        'fillcolor' : colors['red'],
-        'linecolor' : colors['red'],
+        'fillcolor' : '#dc322f',
+        'linecolor' : '#dc322f',
         'name' : "EWK Dibosons",
         'fillstyle': 'solid',
     },
     'ZZ*' : {
         'legendstyle' : 'f',
         'drawstyle' : 'hist',
-        'linecolor' : colors['red'],
-        'fillcolor' : colors['red'],
+        'linecolor' : '#dc322f',
+        'fillcolor' : '#dc322f',
         'name' : "Diboson",
         'fillstyle': 'solid',
     },

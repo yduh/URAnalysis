@@ -161,6 +161,11 @@ jet_specific = [
    #make_branch_pset('energyCorrectionUnc',
 ]
 
+jet_specific_mc = [
+   make_branch_pset('partonFlavour', 'jetFlavourInfo().getPartonFlavour()', '/I'),
+   make_branch_pset('hadronFlavour', 'jetFlavourInfo().getHadronFlavour()', '/I'),
+]
+
 ecal_cluster_specific = [
    make_branch_pset('e1x5'),
    #make_branch_pset('e2x5'),

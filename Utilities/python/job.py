@@ -72,9 +72,13 @@ class Job(object):
       return crab_cfg_name
 
    def save_as_crab2(self):
+      isData = self.name.startswith('data')
+
       cfg = Crab2Cfg('CMSSW', 'USER', 'CRAB', 'GRID')
-      #cfg.CMSSW.total_number_of_events=10000000000
-      #cfg.CMSSW.events_per_job=400000
+      if isData:
+         cfg.CMSSW.total_number_of_lumis=-1
+      else:
+         cfg.CMSSW.total_number_of_events=-1
       cfg.CMSSW.pset = self.pycfg
       cfg.CMSSW.datasetpath = self.dbs_name
       cfg.CMSSW.pycfg_params = self.args

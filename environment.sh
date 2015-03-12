@@ -17,7 +17,7 @@ if [ -d "$URA_BASE/../.SCRAM" ]; then
     #re-run cmsenv, crab tends to screw up many things
     eval `scramv1 runtime -sh`
 
-    vpython=$base/URAnalysis/external/virtualenv
+    vpython=$URA_BASE/URAnalysis/external/virtualenv
     echo "Activating python virtualenv from $vpython"
 
     if [ -d "$vpython" ]; then
