@@ -16,23 +16,46 @@ public:
   //Fills a queue (templated because we might change 
   //the queue definition to a thread-safe one
   template<typename Q>
-  long int fill(Q &queue, std::string filename)
+  long int fill(Q &queue, std::string filename, size_t njob = 1, size_t jobs = 1)
   {
     std::ifstream file(filename.c_str());
     long int counter = 0;
     if(!file)
     {
-      Logger::log().fatal() << "can not open file: " << filename << std::endl;
-      throw 42;
+	    Logger::log().fatal() << "can not open file: " << filename << std::endl;
+	    throw 42;
     }
     else
     {
-      std::string line;
-      while ( std::getline(file,line) )
-      {
-	counter++;
-	queue.push(line);
-      }
+	    using namespace std;
+	    vector<string> filenames;
+	    string line;
+	    while(getline(file,line))
+	    {
+		    filenames.push_back(line);
+	    }
+	    jobs = min(jobs, filenames.size());
+	    if(njob >= jobs)
+	    {
+		    Logger::log().fatal() << "jobnumber is larger than number of files: " << filenames.size() << std::endl;
+		    throw 42;
+	    }
+	    size_t mod = filenames.size() % jobs;
+	    size_t filesperjob = filenames.size() / jobs;
+	    size_t jobmin = njob*filesperjob + min(mod, njob);
+	    size_t jobmax = (njob+1)*filesperjob + min(mod, njob+1);
+	cout << jobmin << " JOB " << jobmax << endl;
+	    for(size_t nf = jobmin ; nf < jobmax ; ++nf)
+	    {
+		    queue.push(filenames[nf]);
+		    counter++;
+	    }
+
+	    //while ( std::getline(file,line) )
+	    //{
+	    //  counter++;
+	    //  queue.push(line);
+	    //}
     }
     return counter;
   }
