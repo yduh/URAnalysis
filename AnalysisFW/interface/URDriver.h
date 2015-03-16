@@ -94,8 +94,10 @@ public:
     opts.add_options()
       ("input", opts::value<std::string>(), "path of the file containing the list of root files to be processed")
       ("output", opts::value<std::string>(), "path of the root file to be produced")
-      ("threads", opts::value<int>()->default_value(2), "number of threads to be used for processing");
-    
+      ("threads", opts::value<int>()->default_value(2), "number of threads to be used for processing")
+      ("J", opts::value<int>()->default_value(1), "total number of jobs")
+      ("j", opts::value<int>()->default_value(0), "jobnumber");
+	  ("noprog", "do not show progress bar");
     //make input and output positional (even though are still valid in CLI)
     args.add("input", 1);
     args.add("output", 1);
@@ -138,10 +140,12 @@ public:
     std::string output_file = values["output"].as<std::string>();
     Logger::log().debug() << "Input file is: " << file_list << 
       std::endl << "Output file is: " << output_file << std::endl;
+    const int njobs = values["J"].as<int>();
+    const int njob = values["j"].as<int>();
 
-    long int nfiles = reader_.fill(input_files, file_list);
+    long int nfiles = reader_.fill(input_files, file_list, njob, njobs);
     //create brogress bar, update it every 5 files, to be faster
-    ProgressBar progbar(nfiles, 1); 
+    ProgressBar progbar(nfiles, 1, !values.count("noprog")); 
 
     const int n_threads = values["threads"].as<int>();
     Logger::log().debug() << "Running with " << n_threads << " threads"<< std::endl;
@@ -153,20 +157,24 @@ public:
 
     //create threads with unique names
     AnalysisWorker<T> *workers[n_threads];
-    std::vector<std::string> outputs;
-    //workers.reserve(n_threads);
-    for(int i=0; i<n_threads; i++)
-    {
-      std::string outname = std::tmpnam(NULL);
-      outname += ".root";
-      Logger::log().debug() << "Output file of thread " << i <<
+	std::vector<std::string> outputs;
+	//workers.reserve(n_threads);
+	for(int i=0; i<n_threads; i++)
+	{
+		std::string outname(output_file);
+		if(n_threads != 1)
+		{
+			outname = std::tmpnam(NULL);
+			outname += ".root";
+			Logger::log().debug() << "Output file of thread " << i <<
 				"will be: " << outname << std::endl;
-      
-      std::ostringstream id;
-      id << "AnalysisWorker_" << i;
-      workers[i] = new AnalysisWorker<T>(id.str(), outname);
-      outputs.push_back(outname);
-    }
+		}
+
+		std::ostringstream id;
+		id << "AnalysisWorker_" << i;
+		workers[i] = new AnalysisWorker<T>(id.str(), outname);
+		outputs.push_back(outname);
+	}
 
     //run threads, wait for them to finish and free memory
 		if(n_threads > 1){
@@ -245,17 +253,20 @@ public:
 		for(int i=0; i<n_threads; i++) delete workers[i];
     
     //merge the files
-    Logger::log().debug() << "Merging output files..." << std::endl;
-    TFileMerger merger;
-    merger.OutputFile(output_file.c_str());
-    for(auto& file : outputs) merger.AddFile(file.c_str(), false); //why false? no clue, copied from old fwk
-    bool isMerged = merger.Merge();
-    
-    if(!isMerged)
-    {
-      Logger::log().fatal() <<"Error in merging thread outputs!" << std::endl;
-      throw 42;
-    }
+		if(n_threads!=1)
+		{
+			Logger::log().debug() << "Merging output files..." << std::endl;
+			TFileMerger merger;
+			merger.OutputFile(output_file.c_str());
+			for(auto& file : outputs) merger.AddFile(file.c_str(), false); //why false? no clue, copied from old fwk
+			bool isMerged = merger.Merge();
+
+			if(!isMerged)
+			{
+				Logger::log().fatal() <<"Error in merging thread outputs!" << std::endl;
+				throw 42;
+			}
+		}
     
     // for(auto& file : outputs) 
     // {
