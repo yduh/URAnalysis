@@ -7,6 +7,7 @@ import URAnalysis.PATTools.custompat as urpat
 import URAnalysis.PATTools.customskims as urskims
 import URAnalysis.PATTools.meta  as meta
 import URAnalysis.Ntuplizer.ntuplizer as ntuple
+import TopQuarkAnalysis.TopEventProducers.producers.pseudoTop_cfi as pseudotop # for method 2
 
 options.parseArguments()
 
@@ -17,10 +18,10 @@ process.MessageLogger.cerr.FwkReport.reportEvery = options.reportEvery
 process.MessageLogger.cerr.FwkSummary.reportEvery = options.reportEvery
 
 process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
-process.maxEvents = cms.untracked.PSet( 
+process.maxEvents = cms.untracked.PSet(
    input = cms.untracked.int32(
       options.maxEvents
-      ) 
+      )
 )
 
 process.source = cms.Source(
@@ -56,12 +57,16 @@ process.metaTree.isMC = cms.bool(options.isMC)
 process.meta = cms.Sequence(
    meta.embed_meta(process, options.isMC) *
    process.metaTree
-   )    
+   )
 
+
+#from pdb import set_trace
+#set_trace()
 #make custom PAT
+
 custom_pat_sequence, collections = urpat.customize(
-   process, 
-   options.isMC, 
+   process,
+   options.isMC,
    **collections
 )
 
@@ -71,7 +76,26 @@ ntuple_sequence, ntuple_end = ntuple.make_ntuple(
    **collections
    )
 
-process.schedule = cms.Schedule()
+process.load("TopQuarkAnalysis.TopEventProducers.producers.pseudoTop_cfi")
+ntuple_sequence += process.pseudoTop
+
+process.pseudoTop = pseudotop.pseudoTop # methed 2
+
+process.pseudoTop = cms.EDProducer("PseudoTopProducer",
+    genParticles = cms.InputTag("prunedGenParticles"),
+    finalStates = cms.InputTag("packedGenParticles"),
+    leptonMinPt = cms.double(20),
+    leptonMaxEta = cms.double(2.4),
+    jetMinPt = cms.double(20),
+    jetMaxEta = cms.double(2.4),
+    leptonConeSize = cms.double(0.1),
+    jetConeSize = cms.double(0.4),
+    wMass = cms.double(80.4),
+    tMass = cms.double(172.5),
+)
+
+process.pseudotop_step = cms.Path(process.pseudoTop)
+process.schedule = cms.Schedule(process.pseudotop_step)
 #make meta+skim+customPAT+Ntuple paths
 #one for each skim sequence
 #shared modules do not get rerun
