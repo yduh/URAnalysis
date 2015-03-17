@@ -17,5 +17,5 @@ while not escape:
       print "Jobs completed! exiting..."
       escape = True
    else:
-      print "%i jobs are still running, checking again in 30 seconds"
+      print "%i jobs are still running, checking again in 30 seconds" % njobs
       time.sleep( 30 )
