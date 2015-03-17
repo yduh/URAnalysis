@@ -49,3 +49,27 @@ task :analyze, [:analyzer] do |t, args|
   task :runThis => rootfiles
   Rake::Task["runThis"].invoke
 end
+
+task :test, [:analyzer] do |t, args|
+  bname = File.basename(args.analyzer).split('.')[0]
+  jobid = ENV['jobid']
+  samples = Dir.glob("inputs/#{jobid}/*.txt").map{|x| File.basename(x).split('.')[0]}
+  data_samples = samples.select{|x| x.start_with?('data')}
+  mc_samples = samples.select{|x| not x.start_with?('data')}
+  samples_to_test = []
+  if not data_samples.empty?
+    samples_to_test << data_samples[0]
+  end
+  if not mc_samples.empty?
+    samples_to_test << mc_samples[0]
+  end
+  jobid = ENV['jobid']
+  task :testThis => "bin/#{bname}.exe" do |u|
+    samples_to_test.each do |sample|
+      input_list = "inputs/#{jobid}/#{sample}.txt"
+      nlines =  %x{wc -l #{input_list}}.to_i
+      sh "time #{bname}.exe #{input_list} #{sample}.#{bname}.test.root -c #{bname}.cfg --threads 1 --J #{nlines} -v"
+    end
+  end
+  Rake::Task["testThis"].invoke
+end
