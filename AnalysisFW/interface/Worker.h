@@ -11,8 +11,9 @@ Simple generic implementation of a thread worker
 class Worker{
 public:
   Worker(std::string &id):
-    id_(id),
-    thread_(){}
+    thread_(),
+    id_(id)
+	{}
 
   void start(){thread_ = std::thread(&Worker::work, this);}
   void join(){thread_.join();}

@@ -37,14 +37,14 @@ public:
 	    jobs = min(jobs, filenames.size());
 	    if(njob >= jobs)
 	    {
-		    Logger::log().fatal() << "jobnumber is larger than number of files: " << filenames.size() << std::endl;
+		    Logger::log().fatal() << "jobnumber ("<< njob <<") is larger than number of files: " << 
+					filenames.size() << std::endl;
 		    throw 42;
 	    }
 	    size_t mod = filenames.size() % jobs;
 	    size_t filesperjob = filenames.size() / jobs;
 	    size_t jobmin = njob*filesperjob + min(mod, njob);
 	    size_t jobmax = (njob+1)*filesperjob + min(mod, njob+1);
-	cout << jobmin << " JOB " << jobmax << endl;
 	    for(size_t nf = jobmin ; nf < jobmax ; ++nf)
 	    {
 		    queue.push(filenames[nf]);

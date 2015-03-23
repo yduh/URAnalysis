@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 # Setup the environment for the framework
-export URA=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+export URA=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P)
 echo "Setting variable \$URA=$URA"
 export URA_BASE=$(dirname $URA)
 

@@ -96,7 +96,7 @@ public:
       ("output", opts::value<std::string>(), "path of the root file to be produced")
       ("threads", opts::value<int>()->default_value(2), "number of threads to be used for processing")
       ("J", opts::value<int>()->default_value(1), "total number of jobs")
-      ("j", opts::value<int>()->default_value(1), "jobnumber");
+      ("j", opts::value<int>()->default_value(0), "jobnumber");
 	  ("noprog", "do not show progress bar");
     //make input and output positional (even though are still valid in CLI)
     args.add("input", 1);

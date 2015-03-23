@@ -462,7 +462,8 @@ class Plotter(object):
 
     def plot_mc_vs_data(self, folder, variable, rebin=1, xaxis='',
                         leftside=True, xrange=None, preprocess=None,
-                        show_ratio=False, ratio_range=0.2, sort=False):
+                        show_ratio=False, ratio_range=0.2, sort=False,
+                        logy=False):
         ''' Compare Monte Carlo to data '''
         #path = os.path.join(folder, variable)
         mc_stack_view = self.make_stack(rebin, preprocess, folder, sort)
@@ -494,5 +495,7 @@ class Plotter(object):
             logging.warning("No data found! Skipping drawing data...")
         # Add legend
         self.add_legend(to_legend, leftside, entries=len(mc_stack.GetHists())+len(to_legend)-1)
+        if logy:
+            self.pad.SetLogy()
         if show_ratio:
             self.add_ratio_plot(data, mc_stack, xrange, ratio_range=0.2)

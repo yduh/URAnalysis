@@ -8,6 +8,9 @@ set -o nounset
 
 install=$CMSSW_BASE/src/URAnalysis/install
 
+#install RooUnfold
+$install/install_roounfold.sh
+
 #installing python
 $install/install_python.sh
 
