@@ -29,8 +29,8 @@ for dir in jobdirs:
     if match:
       exitcode = int(match.group('exitcode'))
       if exitcode != 0 :
-        raise IOError('Condor job %s did not complete properly and exited'
-                      ' returing status %i' % (stdout, exitcode))
+        raise IOError('Condor job %s in %s did not complete properly and exited'
+                      ' returing status %i' % (stdout, os.path.join(os.getcwd(),dir), exitcode))
     else:
       raise ValueError("cannot match %s with exit code regex!" % last_line)
 
