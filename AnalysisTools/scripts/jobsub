@@ -1,0 +1,94 @@
+#!/usr/bin/env python2
+import sys, os, time
+from pdb import set_trace
+from glob import glob
+
+swdir = os.path.realpath(os.environ['URA_PROJECT'])
+jobid = os.environ['jobid']
+inputdir = os.path.join(swdir, 'inputs')
+inputdir = os.path.join(inputdir, jobid)
+
+jobdir = sys.argv[1]
+exe = sys.argv[2]
+jobargs = sys.argv[3:]
+
+#os.mkdir('Production_'+ time.strftime("%Y-%m-%d_%H:%M:%S", time.gmtime()))
+if os.path.isdir(jobdir):
+	print jobdir, 'exists: EXIT'
+	sys.exit(-1)
+os.mkdir(jobdir)
+
+samplefiles = glob(os.path.join(inputdir, '*.txt'))
+
+transferdir = os.path.join(inputdir, 'INPUT')
+transferfiles = []
+if os.path.isdir(transferdir):
+	transferfiles = os.listdir(transferdir)
+
+transferfiles = [os.path.join(transferdir, tf) for tf in transferfiles]
+
+transferfiles_config = ', '.join(transferfiles)
+
+
+filesperjob = 20
+
+for sf in samplefiles:
+  infile = os.path.join(inputdir, sf)
+  sample = os.path.basename(sf).split('.txt')[0]
+  jobpath = os.path.join(
+          jobdir, 
+          sample
+          )
+  os.mkdir(jobpath)
+  infiledes = open(infile, 'r')
+  numrootfiles = infiledes.read().count('.root')
+  infiledes.close()
+  numjobs = max(numrootfiles/filesperjob, 1)
+  print sf, numjobs
+
+  condorfile ="""universe = vanilla
+Executable = batch_job.sh
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = {5}
+Output = con_$(Process).stdout
+Error = con_$(Process).stderr
+Arguments = {0} {1} {6}_out_$(Process).root --thread 1 --j $(Process) --J {3} {4}
+Queue {3}
+
+	""".format(exe, infile, '', numjobs, ' '.join(jobargs), transferfiles_config, sample)
+  
+  conf = open(os.path.join(jobpath, 'condor.jdl'), 'w')
+  conf.write(condorfile)
+  conf.close()
+
+  batch_job="""#!/bin/bash
+WORKINGDIR=$PWD
+cd {0}
+source environment.sh
+cd $WORKINGDIR
+
+PA=$@
+PA=${{PA#* }}
+
+EXE=$1
+
+pwd
+ls -lht
+
+echo $EXE
+echo $PA
+
+$EXE $PA 
+
+exitcode=$? 
+echo "exit code: "$exitcode
+exit $exitcode 
+	""".format(swdir)
+  
+  conf = open(os.path.join(jobpath, 'batch_job.sh'), 'w')
+  conf.write(batch_job)
+  conf.close()
+  
+  os.system('cd ' + jobpath + ' && condor_submit condor.jdl')
+

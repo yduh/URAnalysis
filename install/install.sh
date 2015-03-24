@@ -10,6 +10,9 @@ install=$CMSSW_BASE/src/URAnalysis/install
 
 #add recipe to include pseudoTop code
 
+#install RooUnfold
+$install/install_roounfold.sh
+
 #installing python
 $install/install_python.sh
 
