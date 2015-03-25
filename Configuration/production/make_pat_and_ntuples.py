@@ -7,7 +7,6 @@ import URAnalysis.PATTools.custompat as urpat
 import URAnalysis.PATTools.customskims as urskims
 import URAnalysis.PATTools.meta  as meta
 import URAnalysis.Ntuplizer.ntuplizer as ntuple
-import TopQuarkAnalysis.TopEventProducers.producers.pseudoTop_cfi as pseudotop # for method 2
 
 options.parseArguments()
 
@@ -76,26 +75,7 @@ ntuple_sequence, ntuple_end = ntuple.make_ntuple(
    **collections
    )
 
-process.load("TopQuarkAnalysis.TopEventProducers.producers.pseudoTop_cfi")
-ntuple_sequence += process.pseudoTop
-
-process.pseudoTop = pseudotop.pseudoTop # methed 2
-
-process.pseudoTop = cms.EDProducer("PseudoTopProducer",
-    genParticles = cms.InputTag("prunedGenParticles"),
-    finalStates = cms.InputTag("packedGenParticles"),
-    leptonMinPt = cms.double(20),
-    leptonMaxEta = cms.double(2.4),
-    jetMinPt = cms.double(20),
-    jetMaxEta = cms.double(2.4),
-    leptonConeSize = cms.double(0.1),
-    jetConeSize = cms.double(0.4),
-    wMass = cms.double(80.4),
-    tMass = cms.double(172.5),
-)
-
-process.pseudotop_step = cms.Path(process.pseudoTop)
-process.schedule = cms.Schedule(process.pseudotop_step)
+process.schedule = cms.Schedule()
 #make meta+skim+customPAT+Ntuple paths
 #one for each skim sequence
 #shared modules do not get rerun

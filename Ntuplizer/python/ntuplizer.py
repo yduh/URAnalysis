@@ -230,11 +230,11 @@ def make_ntuple(
      ntuple += process.PSTleptons
 
 
-     process.PST = cms.EDAnalyzer(
+     process.PSTs = cms.EDAnalyzer(
         'NtupleGenParticlesProducer',
         src = cms.InputTag(
            kwargs.get(
-              'PST',
+              'PSTs',
               'pseudoTop'
               )
            ),
@@ -243,7 +243,7 @@ def make_ntuple(
            branches.gen_particle_specific
            )
      )
-     ntuple += process.PST
+     ntuple += process.PSTs
 
      process.PSTneutrinos = cms.EDAnalyzer(
         'NtupleGenParticlesProducer',

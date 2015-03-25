@@ -1,5 +1,5 @@
 #!/bin/bash
 
-pushd $CMSSW_BAS/src
+pushd $CMSSW_BASE/src
 git cms-addpkg TopQuarkAnalysis/TopEventProducers
 popd
