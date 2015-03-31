@@ -72,6 +72,10 @@ muon_specific = [
    #make_branch_pset('numChambersWithSegments', 'numberOfMatches(2)', '/I'), #2 = Muon::SegmentAndTrackArbitration
    make_branch_pset('numMatchedStations', 'numberOfMatchedStations()', '/I'),
 
+   make_branch_pset('trackiso', 'trackIso'),
+   make_branch_pset('ecaliso', 'ecalIso'),
+   make_branch_pset('hcaliso', 'hcalIso'),
+
    #global track attributes
    make_branch_pset('ptErr', '? globalTrack().isNonnull() ? globalTrack().ptError() : -1'),
    make_branch_pset('chi2', '? globalTrack().isNonnull() ? globalTrack().chi2() : -1'),
@@ -130,13 +134,15 @@ jet_specific = [
    make_branch_pset('area', 'jetArea'),
    make_branch_pset('mass', 'p4().mass()'),
 
-   make_branch_pset('chargedHadronEnergy'),  
-   make_branch_pset('neutralHadronEnergy'), 
-   make_branch_pset('photonEnergy'), 
-   make_branch_pset('electronEnergy'), 
-   make_branch_pset('muonEnergy'), 
-   make_branch_pset('forwardEM', 'HFHadronEnergy'), 
-   make_branch_pset('forwardHad', 'HFEMEnergy'),
+   make_branch_pset('chargedHadronEnergyFraction'),  
+   make_branch_pset('neutralHadronEnergyFraction'), 
+   make_branch_pset('chargedEmEnergyFraction'), 
+   make_branch_pset('neutralEmEnergyFraction'), 
+   make_branch_pset('HFHadronEnergyFraction'), 
+   make_branch_pset('HFEMEnergyFraction'),
+   make_branch_pset('muonEnergyFraction'),
+
+   make_branch_pset('chargedMultiplicity'),
 
    make_branch_pset('numChargedHadrons', 'chargedHadronMultiplicity'),
    make_branch_pset('numNeutralHadrons', 'neutralHadronMultiplicity'),
@@ -145,6 +151,7 @@ jet_specific = [
    make_branch_pset('numMuons', 'muonMultiplicity'),
    make_branch_pset('numForwardEMs', 'HFHadronMultiplicity'),
    make_branch_pset('numForwardHads', 'HFEMMultiplicity'),
+   make_branch_pset('numberOfDaughters'),
 
    #FIXME add jet shape information, JEC
    #jet PU id
