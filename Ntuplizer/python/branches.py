@@ -25,8 +25,8 @@ paths_el = [i for i in trigger_paths if 'Ele' in i]
 ##    return ret
 
 def make_branch_pset(branch_name, expr='', stored_type=''):
-   return cms.PSet( 
-      name = cms.string(branch_name), 
+   return cms.PSet(
+      name = cms.string(branch_name),
       expr = cms.string(expr),
       type = cms.string(stored_type)
       )
@@ -46,7 +46,7 @@ vertex_info = [
 
 trigger = [
    make_branch_pset(
-      i,#.replace('_',''), 
+      i,#.replace('_',''),
       'matching_path("HLT_%s_v*").accept' % i,
       '/O'
       )
@@ -68,7 +68,7 @@ genjet_specific = [
 muon_specific = [
    make_branch_pset('ECalEnergy', 'calEnergy().em'),
    make_branch_pset('HCalEnergy', 'calEnergy().had'),
-   make_branch_pset('numChambers', 'numberOfChambers', '/I'), 
+   make_branch_pset('numChambers', 'numberOfChambers', '/I'),
    #make_branch_pset('numChambersWithSegments', 'numberOfMatches(2)', '/I'), #2 = Muon::SegmentAndTrackArbitration
    make_branch_pset('numMatchedStations', 'numberOfMatchedStations()', '/I'),
 
@@ -105,7 +105,7 @@ muon_specific.extend(
 )
 #muon_specific.append(
 #   make_branch_pset(
-#      'testMatchMuonsIsoMu20eta2p1', 
+#      'testMatchMuonsIsoMu20eta2p1',
 #      'triggerObjectMatches().size()',
 #      '/O'
 #      )
@@ -157,14 +157,14 @@ jet_specific = [
    #jet PU id
    make_branch_pset('puId', 'userFloat("pileupJetId:fullDiscriminant")'),
 
-   #make_branch_pset('chargedPtMomPA', 
-   #make_branch_pset('chargedPtMomPB', 
-   #make_branch_pset('constituentPtMomPA', 
+   #make_branch_pset('chargedPtMomPA',
+   #make_branch_pset('chargedPtMomPB',
+   #make_branch_pset('constituentPtMomPA',
    #make_branch_pset('constituentPtMomPB',
-   #make_branch_pset('ptFractionWrongPrimaryVertex', 
-   #make_branch_pset('maxChargedPtFraction', 
+   #make_branch_pset('ptFractionWrongPrimaryVertex',
+   #make_branch_pset('maxChargedPtFraction',
    #make_branch_pset('maxPtFraction',
-   #make_branch_pset('energyCorrection', 
+   #make_branch_pset('energyCorrection',
    #make_branch_pset('energyCorrectionUnc',
 ]
 
@@ -180,7 +180,7 @@ ecal_cluster_specific = [
    make_branch_pset('sigmaIEtaIEta', 'sigmaIetaIeta()'),
    make_branch_pset('sigmaIPhiIPhi', 'sigmaIphiIphi()'),
    #E3x3, SigmaIEtaIPhi
-   
+
    make_branch_pset('hcalDepth1OverEcalBc', 'hcalDepth1OverEcalBc()'),
    make_branch_pset('hcalDepth2OverEcalBc', 'hcalDepth2OverEcalBc()'),
 ]
@@ -262,8 +262,9 @@ geninfo_scpecific = [
    make_branch_pset('weight'),
    make_branch_pset('pdfid1', 'pdf().id.first'),
    make_branch_pset('pdfid2', 'pdf().id.second'),
-   #make_branch_pset('x1', 'pdf()->x.first'),
-   #make_branch_pset('x2', 'pdf()->x.second'),
+   make_branch_pset('x1', 'pdf().x.first'),
+   make_branch_pset('x2', 'pdf().x.second'),
+   #make_branch_pset('renScale', 'pdf().scalePDF'),
    make_branch_pset('renScale', 'qScale()'),
    #make_branch_pset('FacScale', 'qScale());
 ]
@@ -271,7 +272,7 @@ geninfo_scpecific = [
 puinfo_specific = [
    make_branch_pset('bx', 'getBunchCrossing'),
    make_branch_pset('nPU', 'getPU_NumInteractions'),
-   make_branch_pset('nInteractions', 'getTrueNumInteractions'),   
+   make_branch_pset('nInteractions', 'getTrueNumInteractions'),
 ]
 
 gen_particle_specific = [
@@ -287,6 +288,6 @@ met_specific = [
    make_branch_pset('px'),
    make_branch_pset('py'),
    make_branch_pset('et'),
-   make_branch_pset('phi'),   
+   make_branch_pset('phi'),
 ]
 

@@ -17,10 +17,10 @@ process.MessageLogger.cerr.FwkReport.reportEvery = options.reportEvery
 process.MessageLogger.cerr.FwkSummary.reportEvery = options.reportEvery
 
 process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
-process.maxEvents = cms.untracked.PSet( 
+process.maxEvents = cms.untracked.PSet(
    input = cms.untracked.int32(
       options.maxEvents
-      ) 
+      )
 )
 
 process.source = cms.Source(
@@ -56,12 +56,16 @@ process.metaTree.isMC = cms.bool(options.isMC)
 process.meta = cms.Sequence(
    meta.embed_meta(process, options.isMC) *
    process.metaTree
-   )    
+   )
 
+
+#from pdb import set_trace
+#set_trace()
 #make custom PAT
+
 custom_pat_sequence, collections = urpat.customize(
-   process, 
-   options.isMC, 
+   process,
+   options.isMC,
    **collections
 )
 
