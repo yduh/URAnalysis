@@ -20,7 +20,8 @@ public:
     myName_(myName),
     outFile_(output_name.c_str(), "recreate"),
     tree_(0)
-  {};
+  {
+};
   ~AnalyzerBase();
      
   // To be run inside the thread

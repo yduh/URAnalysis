@@ -55,7 +55,7 @@ def make_ntuple(
       'NtupleMuonsProducer',
       src = cms.InputTag(
          kwargs.get(
-            'muons', 
+            'muons',
             'slimmedMuons'
             )
          ),
@@ -97,7 +97,7 @@ def make_ntuple(
          branches.isolation +
          branches.vertex_info +
          branches.electron_specific +
-         branches.ecal_cluster_specific + 
+         branches.ecal_cluster_specific +
          branches.super_cluster_specific
          )
    )
@@ -197,6 +197,70 @@ def make_ntuple(
            )
      )
      ntuple += process.genParticles
+
+     ###### pseudo top test!!
+     process.PSTjets = cms.EDAnalyzer(
+        'NtupleGenJetsProducer',
+        src = cms.InputTag(
+           kwargs.get(
+		  	  'PSTjets',
+              'pseudoTop:jets'
+              )
+           ),
+        branches = cms.VPSet(
+           branches.kinematics +
+           branches.genjet_specific
+           )
+     )
+     ntuple += process.PSTjets
+
+     process.PSTleptons = cms.EDAnalyzer(
+        'NtupleGenJetsProducer',
+        src = cms.InputTag(
+           kwargs.get(
+			  'PSTleptons',
+              'pseudoTop:leptons'
+              )
+           ),
+        branches = cms.VPSet(
+           branches.kinematics +
+           branches.genjet_specific
+           )
+     )
+     ntuple += process.PSTleptons
+
+
+     process.PSTs = cms.EDAnalyzer(
+        'NtupleGenParticlesProducer',
+        src = cms.InputTag(
+           kwargs.get(
+              'PSTs',
+              'pseudoTop'
+              )
+           ),
+        branches = cms.VPSet(
+           branches.kinematics +
+           branches.gen_particle_specific
+           )
+     )
+     ntuple += process.PSTs
+
+     process.PSTneutrinos = cms.EDAnalyzer(
+        'NtupleGenParticlesProducer',
+        src = cms.InputTag(
+           kwargs.get(
+              'PSTneutrinos',
+              'pseudoTop:neutrinos'
+              )
+           ),
+        branches = cms.VPSet(
+           branches.kinematics +
+           branches.gen_particle_specific
+           )
+     )
+     ntuple += process.PSTneutrinos
+
+
 
      process.genPInheritance = cms.EDAnalyzer(
         'NtupleGenParticleInheritance',
