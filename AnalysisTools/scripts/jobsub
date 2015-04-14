@@ -31,6 +31,7 @@ transferfiles_config = ', '.join(transferfiles)
 
 
 filesperjob = 20
+minjobs = 20
 
 for sf in samplefiles:
   infile = os.path.join(inputdir, sf)
@@ -43,7 +44,8 @@ for sf in samplefiles:
   infiledes = open(infile, 'r')
   numrootfiles = infiledes.read().count('.root')
   infiledes.close()
-  numjobs = max(numrootfiles/filesperjob, 1)
+  numjobs = max(numrootfiles/filesperjob, minjobs)
+  numjobs = numjobs if numrootfiles > numjobs else numrootfiles
   print sf, numjobs
 
   condorfile ="""universe = vanilla
