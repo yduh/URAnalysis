@@ -9,3 +9,4 @@ external/virtualenv
 *.tar
 .lib_timestamp
 external/URAnalysis
+external/src

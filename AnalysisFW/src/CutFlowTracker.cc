@@ -3,6 +3,7 @@
 
 void CutFlowTracker::track(std::string pointname)
 {
+	if(!active_) return;
 	auto point = cutflow_.find(pointname);
 	if(point != cutflow_.end()){
 		point->second.second++;

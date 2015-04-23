@@ -75,7 +75,7 @@ task :test, [:analyzer] do |t, args|
 end
 
 task :trackBatch, [:submit_dir] do |t, args|
-  sh 'hold.py'
+  sh "hold.py --check_correctness #{args.submit_dir}"
   Dir.chdir(args.submit_dir) do
     sh 'addjobs.py'
   end
