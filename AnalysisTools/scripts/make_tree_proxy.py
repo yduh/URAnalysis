@@ -27,11 +27,13 @@ tree  = tfile.Get(args.tree_path)
 if not tree:
    raise ValueError('%s does not exist!' % args.tree_path)
 
-branches = [cpp_types.BranchMeta(i) for i in tree.GetListOfBranches()]
+#branches = [cpp_types.BranchMeta(i) for i in tree.GetListOfBranches()]
+branches = [cpp_types.BranchMeta(i) for i in tree.GetListOfBranches() if 'LHE' not in i.GetName()]
 objects  = set(i.name.split(cpp_types._separator)[0] for i in branches if i.is_object)
 objects  = [cpp_types.ObjectMeta(
-      i, 
-      [j for j in branches if j.name.startswith(i)]
+      i,
+      #[j for j in branches if j.name.startswith(i)]
+      [j for j in branches if j.name.startswith(i+'.')]
       ) for i in objects]
 
 streamer = cpp_types.StreamerMeta(branches, objects)
@@ -47,8 +49,11 @@ if args.nodict:
 
    #Compile macro
    #ROOT.gROOT.ProcessLine('.L URStreamer.C+')
-   os.system('rootcint -f Dict.cxx -c ./URStreamer.h LinkDef.h')
-   os.system('g++ -Wall -shared -fPIC -o Dict.so Dict.cxx `root-config --cflags --glibs`')
+   #os.system('rootcint -f Dict.cxx -c ./URStreamer.h LinkDef.h')
+   os.system('rootcling -f Dict.cxx -c ./URStreamer.h LinkDef.h')
+   os.system('g++ -Wall -c -fPIC -o Dict.o Dict.cxx `root-config --cflags --glibs`')
+   os.system('g++ -shared -Wl,-soname,Dict.so -o Dict.so Dict.o')
+   #os.system('g++ -Wall -shared -fPIC -o Dict.so Dict.cxx `root-config --cflags --glibs`')
 
 
 #copy files

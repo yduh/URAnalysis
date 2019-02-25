@@ -11,7 +11,7 @@ _templates_dir = os.path.join(
    os.environ['CMSSW_BASE'],
    'src/URAnalysis/AnalysisTools/python/autocode/templates'
 )
-_lorentz_vector_members = set(['pt', 'eta', 'phi', 'et', 'mass'])
+_lorentz_vector_members = set(['px', 'py', 'pz', 'pt', 'eta', 'phi', 'et', 'e', 'mass'])
 _lorentz_setter = 'setLotentzVector'
 
 def get_template(name):
@@ -124,9 +124,13 @@ class ObjectMeta(object):
       made in a separate function to 
       allow customized load of the 
       objects'''
+
+      rname = self.name
+      if 'Metsnoh' in self.name:
+         rname = 'Metsnohs'		
       return cpp_format(
          ObjectMeta.cpp_template,
-         NAME=self.name,
+         NAME=rname,
          LOAD_VAR=self.load_var,
          BRANCH_SETTING='\n'.join(
             i.cpp_set_branch(tname) \
@@ -184,20 +188,27 @@ class ObjectMeta(object):
          if i.attr in _lorentz_vector_members
          )
       if len(lv_pars) >= 2:
-         if 'pt' not in lv_pars:
+         if 'et' in lv_pars:
             lv_pars['pt'] = lv_pars['et']
             del lv_pars['et']
-
-         if len(lv_pars) == 2: #pt/et, phi
+         if len(lv_pars) == 2 and 'px' in lv_pars and 'py' in lv_pars:
             it_dump += '\nobj.%s(*it_%s, *it_%s);' \
-               % (_lorentz_setter, lv_pars['pt'], lv_pars['phi'])
+               % (_lorentz_setter, lv_pars['px'], lv_pars['py'])
          elif len(lv_pars) == 3: #pt/et, eta, phi
             it_dump += '\nobj.%s(*it_%s, *it_%s, *it_%s);' \
                % (_lorentz_setter, lv_pars['pt'], lv_pars['eta'], lv_pars['phi'])
-         elif len(lv_pars) == 4: #pt/et, eta, phi, mass
+         elif len(lv_pars) == 4 and 'e' in lv_pars and 'pt' in lv_pars: #pt/et, eta, phi, e
+            it_dump += '\nobj.%s(*it_%s, *it_%s, *it_%s, *it_%s);' \
+               % (_lorentz_setter, lv_pars['pt'], lv_pars['eta'],
+                  lv_pars['phi'], lv_pars['e'])
+         elif len(lv_pars) == 4 and 'mass' in lv_pars and 'pt' in lv_pars: #pt/et, eta, phi, mass
             it_dump += '\nobj.%s(*it_%s, *it_%s, *it_%s, *it_%s);' \
                % (_lorentz_setter, lv_pars['pt'], lv_pars['eta'],
                   lv_pars['phi'], lv_pars['mass'])
+         elif len(lv_pars) == 4 and 'e' in lv_pars and 'px' in lv_pars:
+            it_dump += '\nobj.%s(*it_%s, *it_%s, *it_%s, *it_%s);' \
+               % (_lorentz_setter, lv_pars['px'], lv_pars['py'],
+                  lv_pars['pz'], lv_pars['e'])
       else:
          it_dump += '\n'+'\n'.join(
             'obj.set%s(*it_%s);' % (i.attr,i.var) for i in self.branches
@@ -302,12 +313,16 @@ class ObjStruct(object):
       inheritance = ""
       if len(self.lorentz_members) > 0:
          inheritance = ': public TLorentzVector'
-         if len(self.lorentz_members) == 2: #pt/et, phi
-            setters += '\nvoid %s(float pt, float phi){SetPtEtaPhiM(pt, 0., phi, 0.);}' % _lorentz_setter
+         if len(self.lorentz_members) == 2 and 'px' in self.lorentz_members and 'py' in self.lorentz_members:
+            setters += '\nvoid %s(float px, float py){SetXYZM(px, py, 0., 0.);}' % _lorentz_setter
          elif len(self.lorentz_members) == 3: #pt/et, eta, phi
             setters += '\nvoid %s(float pt, float eta, float phi){SetPtEtaPhiM(pt, eta, phi, 0.);}' % _lorentz_setter
-         elif len(self.lorentz_members) == 4: #pt/et, eta, phi, mass
+         elif len(self.lorentz_members) == 4 and 'e' in self.lorentz_members and 'pt' in self.lorentz_members: #pt/et, eta, phi, e
+            setters += '\nvoid %s(float pt, float eta, float phi, float e){SetPtEtaPhiE(pt, eta, phi, e);}' % _lorentz_setter
+         elif len(self.lorentz_members) == 4 and 'mass' in self.lorentz_members and 'pt' in self.lorentz_members: #pt/et, eta, phi, mass
             setters += '\nvoid %s(float pt, float eta, float phi, float mass){SetPtEtaPhiM(pt, eta, phi, mass);}' % _lorentz_setter
+         elif len(self.lorentz_members) == 4 and 'e' in self.lorentz_members and 'px' in self.lorentz_members:
+            setters += '\nvoid %s(float px, float py, float pz, float e){SetPxPyPzE(px, py, pz, e);}' % _lorentz_setter
 
          void_init = '%s\n%s' % ('TLorentzVector(),', void_init)
          getters += '\nClassDef(%s, 1);' % self.name
